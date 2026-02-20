@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebTV</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Poppins', sans-serif;
+        }
+
+        body{
+            background: radial-gradient(circle at top, #300000, #0a0a0a 60%);
+            color:white;
+        }
+
+        /* HEADER */
+
+        .header{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:20px 60px;
+            background:rgba(0,0,0,0.6);
+            backdrop-filter:blur(10px);
+            border-bottom:1px solid rgba(255,0,0,0.3);
+        }
+
+        .logo{
+            font-size:26px;
+            font-weight:700;
+        }
+
+        .logo span{
+            color:#ff2e2e;
+        }
+
+        .nav a{
+            margin:0 20px;
+            color:#ccc;
+            text-decoration:none;
+            font-weight:500;
+            position:relative;
+        }
+
+        .nav .active{
+            color:white;
+        }
+
+        .nav .active::after{
+            content:"";
+            position:absolute;
+            bottom:-6px;
+            left:0;
+            width:100%;
+            height:2px;
+            background:#ff2e2e;
+            box-shadow:0 0 10px #ff2e2e;
+        }
+
+        .profile{
+            display:flex;
+            align-items:center;
+        }
+
+        .search{
+            width:30px;
+            height:30px;
+            background:rgba(255,255,255,0.1);
+            border-radius:50%;
+            cursor:pointer;
+            position:relative;
+            margin-right:15px;
+        }
+
+        .search::before{
+            content:"🔍";
+            position:absolute;
+            top:50%;
+            left:50%;
+            transform:translate(-50%, -50%);
+            font-size:14px;
+        }
+
+        .avatar{
+            width:40px;
+            height:40px;
+            border-radius:50%;
+            border:2px solid #ff2e2e;
+            background:linear-gradient(45deg, #ff2e2e, #ff6666);
+        }
+
+        /* HERO */
+
+        .hero{
+            height:85vh;
+            background:
+                linear-gradient(to right, rgba(0,0,0,0.85) 30%, transparent 70%),
+                linear-gradient(135deg, #ff2e2e 0%, #000 100%);
+            display:flex;
+            align-items:center;
+            padding-left:80px;
+        }
+
+        .hero-content{
+            max-width:600px;
+        }
+
+        .hero h1{
+            font-size:70px;
+            font-weight:300;
+        }
+
+        .hero h1 span{
+            font-weight:700;
+        }
+
+        .meta{
+            margin:15px 0;
+            font-size:16px;
+            color:#ccc;
+        }
+
+        .badge{
+            background:#ff2e2e;
+            padding:4px 8px;
+            border-radius:5px;
+            margin-left:10px;
+        }
+
+        .quality{
+            background:#444;
+            padding:4px 8px;
+            border-radius:5px;
+            margin-left:5px;
+        }
+
+        .genres{
+            margin-bottom:20px;
+            color:#aaa;
+        }
+
+        .buttons button{
+            padding:15px 30px;
+            border:none;
+            font-size:16px;
+            border-radius:8px;
+            margin-right:15px;
+            cursor:pointer;
+            transition:.3s;
+        }
+
+        .btn-primary{
+            background:#ff2e2e;
+            color:white;
+            box-shadow:0 0 20px rgba(255,0,0,0.6);
+        }
+
+        .btn-primary:hover{
+            transform:scale(1.05);
+        }
+
+        .btn-secondary{
+            background:transparent;
+            border:1px solid rgba(255,255,255,0.4);
+            color:white;
+        }
+
+        /* DIVIDER */
+
+        .divider{
+            height:2px;
+            background:linear-gradient(to right, transparent, #ff2e2e, transparent);
+            box-shadow:0 0 20px #ff2e2e;
+        }
+
+        /* EPISODES */
+
+        .episodes{
+            padding:60px 80px;
+        }
+
+        .episodes h2{
+            margin-bottom:20px;
+        }
+
+        .season-select{
+            background:rgba(255,0,0,0.2);
+            display:inline-block;
+            padding:10px 20px;
+            border-radius:8px;
+            margin-bottom:30px;
+        }
+
+        .episode-card{
+            display:flex;
+            align-items:center;
+            margin-bottom:25px;
+            background:rgba(255,255,255,0.03);
+            padding:15px;
+            border-radius:12px;
+            transition:.3s;
+        }
+
+        .episode-card:hover{
+            background:rgba(255,0,0,0.1);
+        }
+
+        .episode-card img{
+            width:200px;
+            height:120px;
+            border-radius:8px;
+            margin-right:20px;
+            object-fit:cover;
+        }
+
+        .episode-info{
+            flex:1;
+        }
+
+        .episode-info h3{
+            font-size:18px;
+            margin-bottom:10px;
+        }
+
+        .ep{
+            background:#ff2e2e;
+            padding:4px 6px;
+            border-radius:4px;
+            margin-right:8px;
+        }
+
+        .episode-info p{
+            color:#ccc;
+            line-height:1.4;
+        }
+
+        .duration{
+            margin-left:auto;
+            color:#aaa;
+        }
+
+        /* RECOMMEND */
+
+        .recommend{
+            padding:40px 80px 80px;
+        }
+
+        .recommend h2{
+            margin-bottom:30px;
+        }
+
+        .cards{
+            display:flex;
+            gap:20px;
+        }
+
+        .rec-card{
+            flex:1;
+            height:180px;
+            background:linear-gradient(45deg, #ff2e2e, #ff6666);
+            border-radius:15px;
+            position:relative;
+            overflow:hidden;
+            transition:.3s;
+            cursor:pointer;
+        }
+
+        .rec-card:hover{
+            transform:scale(1.05);
+        }
+
+        .rec-card::before{
+            content:"🎬";
+            position:absolute;
+            top:50%;
+            left:50%;
+            transform:translate(-50%, -50%);
+            font-size:48px;
+            opacity:0.5;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .header{
+                padding:15px 20px;
+            }
+            
+            .nav{
+                display:none;
+            }
+            
+            .hero{
+                padding-left:20px;
+            }
+            
+            .hero h1{
+                font-size:40px;
+            }
+            
+            .episodes, .recommend{
+                padding:30px 20px;
+            }
+            
+            .episode-card{
+                flex-direction:column;
+            }
+            
+            .episode-card img{
+                width:100%;
+                height:200px;
+                margin-right:0;
+                margin-bottom:15px;
+            }
+            
+            .cards{
+                flex-direction:column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">🔥 <span>Web</span>TV</div>
+        <nav class="nav">
+            <a class="active">Início</a>
+            <a>Séries</a>
+            <a>Filmes</a>
+            <a>Minha Lista</a>
+        </nav>
+        <div class="profile">
+            <div class="search"></div>
+            <div class="avatar"></div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Desejo <span>Perigoso</span></h1>
+            <div class="meta">
+                Série • 2023 • 1 Temporada
+                <span class="badge">16</span>
+                <span class="quality">1080P</span>
+            </div>
+            <p class="genres">Romance, Drama</p>
+            <div class="buttons">
+                <button class="btn-primary">Assistir Agora</button>
+                <button class="btn-secondary">+ Minha Lista</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="episodes">
+        <h2>Episódios</h2>
+        <div class="season-select">
+            Temporada 1 ⌄
+        </div>
+        <div class="episode-card">
+            <img src="https://picsum.photos/200/120?1" alt="Episódio 1">
+            <div class="episode-info">
+                <h3><span class="ep">E1</span> Encontro Perigoso</h3>
+                <p>Sofia conhece Gabriel em um encontro inesperado...</p>
+            </div>
+            <span class="duration">42 min</span>
+        </div>
+        <div class="episode-card">
+            <img src="https://picsum.photos/200/120?2" alt="Episódio 2">
+            <div class="episode-info">
+                <h3><span class="ep">E2</span> Segredos Revelados</h3>
+                <p>Os segredos de Gabriel começam a vir à tona...</p>
+            </div>
+            <span class="duration">45 min</span>
+        </div>
+    </section>
+
+    <section class="recommend">
+        <h2>Você Também Pode Gostar</h2>
+        <div class="cards">
+            <div class="rec-card"></div>
+            <div class="rec-card"></div>
+            <div class="rec-card"></div>
+        </div>
+    </section>
+
+    <script>
+        const API_KEY = 'b275ce8e1a6b3d5d879bb0907e4f56ad';
+        const BASE_URL = 'https://api.themoviedb.org/3';
+
+        // Carregar dados da série principal
+        async function loadHeroContent() {
+            try {
+                const response = await fetch('./series.json');
+                const series = await response.json();
+                
+                if (series.length > 0) {
+                    const mainSerie = series[0];
+                    const tmdbData = await getTMDBData('tv', mainSerie.tmdb_id);
+                    
+                    if (tmdbData) {
+                        const heroTitle = document.querySelector('.hero h1');
+                        const heroMeta = document.querySelector('.meta');
+                        const heroGenres = document.querySelector('.genres');
+                        
+                        heroTitle.innerHTML = `${tmdbData.name || mainSerie.titulo}`;
+                        heroMeta.innerHTML = `
+                            Série • ${tmdbData.first_air_date ? new Date(tmdbData.first_air_date).getFullYear() : '2023'} • ${tmdbData.number_of_seasons || 1} Temporada
+                            <span class="badge">${tmdbData.content_ratings?.rating || '16'}</span>
+                            <span class="quality">1080P</span>
+                        `;
+                        heroGenres.innerHTML = tmdbData.genres ? tmdbData.genres.map(g => g.name).join(', ') : 'Romance, Drama';
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados da série:', error);
+            }
+        }
+
+        // Carregar recomendações
+        async function loadRecommendations() {
+            try {
+                const response = await fetch('./cinema.json');
+                const movies = await response.json();
+                
+                const recCards = document.querySelectorAll('.rec-card');
+                
+                for (let i = 0; i < Math.min(movies.length, recCards.length); i++) {
+                    const movie = movies[i];
+                    const tmdbData = await getTMDBData('movie', movie.tmdb_id);
+                    
+                    if (tmdbData) {
+                        recCards[i].style.background = tmdbData.poster_path 
+                            ? `url('https://image.tmdb.org/t/p/w400${tmdbData.poster_path}') center/cover`
+                            : 'linear-gradient(45deg, #ff2e2e, #ff6666)';
+                        
+                        recCards[i].innerHTML = `
+                            <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top, rgba(0,0,0,0.9), transparent);padding:20px;">
+                                <h3 style="font-size:16px;margin-bottom:8px;color:white;">${tmdbData.title || movie.titulo}</h3>
+                                <p style="font-size:14px;color:#ccc;">${tmdbData.overview ? tmdbData.overview.substring(0, 80) + '...' : 'Clique para assistir'}</p>
+                            </div>
+                        `;
+                        
+                        recCards[i].onclick = () => {
+                            if (movie.url) {
+                                window.open(movie.url, '_blank');
+                            }
+                        };
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao carregar recomendações:', error);
+            }
+        }
+
+        // Função para buscar dados TMDB
+        async function getTMDBData(type, id) {
+            try {
+                const url = type === 'movie' 
+                    ? `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=pt-BR`
+                    : `${BASE_URL}/tv/${id}?api_key=${API_KEY}&language=pt-BR`;
+                
+                const response = await fetch(url);
+                return await response.json();
+            } catch (error) {
+                console.error('Erro ao buscar dados TMDB:', error);
+                return null;
+            }
+        }
+
+        // Adicionar eventos aos botões
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHeroContent();
+            loadRecommendations();
+            
+            const primaryBtn = document.querySelector('.btn-primary');
+            if (primaryBtn) {
+                primaryBtn.addEventListener('click', () => {
+                    fetch('./series.json')
+                        .then(response => response.json())
+                        .then(series => {
+                            if (series.length > 0) {
+                                const mainSerie = series[0];
+                                if (mainSerie.identificador_archive) {
+                                    window.open(`https://archive.org/details/${mainSerie.identificador_archive}`, '_blank');
+                                }
+                            }
+                        });
+                });
+            }
+            
+            const secondaryBtn = document.querySelector('.btn-secondary');
+            if (secondaryBtn) {
+                secondaryBtn.addEventListener('click', () => {
+                    alert('Adicionado à sua lista!');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
