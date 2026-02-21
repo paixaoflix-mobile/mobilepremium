@@ -347,7 +347,116 @@
             font-size: 1.1rem;
         }
 
-        .empty-continue-watching-icon {
+        /* Content Sections */
+        .section {
+            padding: 60px 40px;
+            background: #0F171E;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #E50914, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .content-item {
+            background: linear-gradient(135deg, rgba(229, 9, 20, 0.1) 0%, rgba(15, 23, 30, 0.8) 100%);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(229, 9, 20, 0.2);
+        }
+
+        .content-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(229, 9, 20, 0.3);
+        }
+
+        .content-item-thumbnail {
+            width: 100%;
+            height: 280px;
+            background: linear-gradient(45deg, #E50914, #ff6b6b);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-item-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .content-item-info {
+            padding: 15px;
+        }
+
+        .content-item-title {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #FFFFFF;
+            line-height: 1.3;
+        }
+
+        .content-item-meta {
+            font-size: 0.8rem;
+            color: #B3B3B3;
+            margin-bottom: 8px;
+        }
+
+        .content-item-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #E50914;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .content-item-award {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #FFD700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .empty-section {
+            text-align: center;
+            padding: 40px;
+            color: #B3B3B3;
+            font-size: 1.1rem;
+        }
+
+        .empty-section-icon {
             font-size: 3rem;
             margin-bottom: 20px;
             opacity: 0.5;
@@ -589,39 +698,295 @@
         // Initialize Continue Watching when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
             window.continueWatching = new ContinueWatching();
+            window.contentSections = new ContentSectionsManager();
         });
 
-        // Example function to simulate progress (for testing)
-        function simulateProgress() {
-            const sampleData = [
-                {
-                    id: 'movie1',
-                    title: 'Filme de Ação',
-                    type: 'movie',
-                    progress: 75,
-                    duration: 7200, // 2 hours
-                    thumbnail: 'https://via.placeholder.com/300x180/E50914/FFFFFF?text=Filme+1'
-                },
-                {
-                    id: 'episode1',
-                    title: 'Série Episódio 1',
-                    type: 'episode',
-                    progress: 45,
-                    duration: 2400, // 40 minutes
-                    thumbnail: 'https://via.placeholder.com/300x180/E50914/FFFFFF?text=Série+1'
-                }
-            ];
+        // Content Sections Manager
+        class ContentSectionsManager {
+            constructor() {
+                this.init();
+            }
 
-            sampleData.forEach(item => {
-                window.continueWatching.saveProgress(
-                    item.id,
-                    item.title,
-                    item.type,
-                    item.progress,
-                    item.duration,
-                    item.thumbnail
-                );
-            });
+            init() {
+                this.loadAllSections();
+                this.setupSaturdayNightSchedule();
+                this.setupNovelaSearch();
+                this.setupTop10Search();
+            }
+
+            // Load all sections
+            async loadAllSections() {
+                await this.loadNaoDeixeDeVer();
+                await this.loadAsCriancasAmam();
+                await this.loadTop10Brasileiro();
+                await this.loadPremiadosPelaMidia();
+                await this.loadPrepareSuaPipoca();
+                await this.loadNegritudeDestaque();
+                await this.loadNostalgia();
+                await this.loadRomances();
+                await this.loadNacionais();
+            }
+
+            // Não deixe de ver - Launch 2026
+            async loadNaoDeixeDeVer() {
+                const grid = document.getElementById('nao-deixe-de-ver-grid');
+                if (!grid) return;
+
+                // Simulate launch 2026 content
+                const launchContent = [
+                    { id: 'launch1', title: 'Lançamento 2026 - Ação', type: 'movie', year: 2026, thumbnail: 'https://via.placeholder.com/200x280/E50914/FFFFFF?text=Lançamento+1' },
+                    { id: 'launch2', title: 'Lançamento 2026 - Comédia', type: 'movie', year: 2026, thumbnail: 'https://via.placeholder.com/200x280/E50914/FFFFFF?text=Lançamento+2' },
+                    { id: 'launch3', title: 'Lançamento 2026 - Drama', type: 'movie', year: 2026, thumbnail: 'https://via.placeholder.com/200x280/E50914/FFFFFF?text=Lançamento+3' },
+                    { id: 'launch4', title: 'Lançamento 2026 - Suspense', type: 'movie', year: 2026, thumbnail: 'https://via.placeholder.com/200x280/E50914/FFFFFF?text=Lançamento+4' }
+                ];
+
+                grid.innerHTML = launchContent.map(item => this.createContentItem(item)).join('');
+            }
+
+            // Top 10 Brasileiro
+            async loadTop10Brasileiro() {
+                const grid = document.getElementById('top-10-brasileiro-grid');
+                if (!grid) return;
+
+                // Simulate Top 10 Brazil content
+                const top10Content = [
+                    { id: 'top1', title: 'Top 1 Brasil', type: 'movie', badge: 'Em Breve' },
+                    { id: 'top2', title: 'Top 2 Brasil', type: 'movie' },
+                    { id: 'top3', title: 'Top 3 Brasil', type: 'movie' },
+                    { id: 'top4', title: 'Top 4 Brasil', type: 'movie' },
+                    { id: 'top5', title: 'Top 5 Brasil', type: 'movie' }
+                ];
+
+                grid.innerHTML = top10Content.map(item => this.createContentItem(item)).join('');
+            }
+
+            // As crianças amam - Kids content
+            async loadAsCriancasAmam() {
+                const grid = document.getElementById('as-criancas-amam-grid');
+                if (!grid) return;
+
+                // Simulate kids content
+                const kidsContent = [
+                    { id: 'kids1', title: 'Desenho Infantil 1', type: 'movie', thumbnail: 'https://via.placeholder.com/200x280/4CAF50/FFFFFF?text=Kids+1' },
+                    { id: 'kids2', title: 'Desenho Infantil 2', type: 'movie', thumbnail: 'https://via.placeholder.com/200x280/4CAF50/FFFFFF?text=Kids+2' },
+                    { id: 'kids3', title: 'Série Kids 1', type: 'series', thumbnail: 'https://via.placeholder.com/200x280/4CAF50/FFFFFF?text=Kids+3' },
+                    { id: 'kids4', title: 'Série Kids 2', type: 'series', thumbnail: 'https://via.placeholder.com/200x280/4CAF50/FFFFFF?text=Kids+4' }
+                ];
+
+                grid.innerHTML = kidsContent.map(item => this.createContentItem(item)).join('');
+            }
+
+            // Sábado à noite - Multiple genres
+            async loadSabadoANoite() {
+                const grid = document.getElementById('sabado-a-noite-grid');
+                if (!grid) return;
+
+                const genres = ['comédia', 'suspense', 'terror', 'drama', 'família', 'religioso', 'musical', 'dorama', 'ação', 'adulto', 'policial', 'anime', 'animação', 'nacional', 'ficção'];
+                const sabadoContent = genres.map((genre, index) => ({
+                    id: `sabado-${index}`,
+                    title: `${genre.charAt(0).toUpperCase() + genre.slice(1)} para Sábado`,
+                    type: 'movie',
+                    thumbnail: `https://via.placeholder.com/200x280/FF9800/FFFFFF?text=${genre}`
+                }));
+
+                grid.innerHTML = sabadoContent.map(item => this.createContentItem(item)).join('');
+            }
+
+            // Premiados pela mídia
+            async loadPremiadosPelaMidia() {
+                const grid = document.getElementById('premiados-pela-midia-grid');
+                if (!grid) return;
+
+                // Simulate award-winning content
+                const awardContent = [
+                    { id: 'award1', title: 'Filme Premiado 1', type: 'movie', award: 'Oscar 2023', year: 2023 },
+                    { id: 'award2', title: 'Filme Premiado 2', type: 'movie', award: 'Golden Globe 2023', year: 2023 },
+                    { id: 'award3', title: 'Série Premiada 1', type: 'series', award: 'Emmy 2023', year: 2023 }
+                ];
+
+                grid.innerHTML = awardContent.map(item => this.createContentItem(item)).join('');
+            }
+
+            // Prepare sua pipoca - Series
+            async loadPrepareSuaPipoca() {
+                const grid = document.getElementById('prepare-sua-pipoca-grid');
+                if (!grid) return;
+
+                // Simulate series content (7 regular + 3 kids)
+                const seriesContent = [
+                    { id: 'series1', title: 'Série Adulta 1', type: 'series' },
+                    { id: 'series2', title: 'Série Adulta 2', type: 'series' },
+                    { id: 'series3', title: 'Série Adulta 3', type: 'series' },
+                    { id: 'series4', title: 'Série Adulta 4', type: 'series' },
+                    { id: 'series5', title: 'Série Adulta 5', type: 'series' },
+                    { id: 'series6', title: 'Série Adulta 6', type: 'series' },
+                    { id: 'series7', title: 'Série Adulta 7', type: 'series' },
+                    { id: 'kids_series1', title: 'Série Kids 1', type: 'series', thumbnail: 'https://via.placeholder.com/200x280/4CAF50/FFFFFF?text=Kids+Série+1' },
+                    { id: 'kids_series2', title: 'Série Kids 2', type: 'series', thumbnail: 'https://via.placeholder.com/200x280/4CAF50/FFFFFF?text=Kids+Série+2' },
+                    { id: 'kids_series3', title: 'Série Kids 3', type: 'series', thumbnail: 'https://via.placeholder.com/200x280/4CAF50/FFFFFF?text=Kids+Série+3' }
+                ];
+
+                grid.innerHTML = seriesContent.map(item => this.createContentItem(item)).join('');
+            }
+
+            // Negritude em destaque
+            async loadNegritudeDestaque() {
+                const grid = document.getElementById('negritude-destaque-grid');
+                if (!grid) return;
+
+                // Check if content with "negritude" genre exists
+                const hasNegritudeContent = true; // Simulate finding content
+                
+                if (hasNegritudeContent) {
+                    const section = document.getElementById('negritude-destaque');
+                    if (section) section.classList.remove('hidden');
+
+                    const negritudeContent = [
+                        { id: 'black1', title: 'Cultura Negra 1', type: 'movie' },
+                        { id: 'black2', title: 'Cultura Negra 2', type: 'movie' },
+                        { id: 'black3', title: 'Cultura Negra 3', type: 'series' }
+                    ];
+
+                    grid.innerHTML = negritudeContent.map(item => this.createContentItem(item)).join('');
+                }
+            }
+
+            // Nostalgia - Classics
+            async loadNostalgia() {
+                const grid = document.getElementById('nostalgia-grid');
+                if (!grid) return;
+
+                const classicContent = [
+                    { id: 'classic1', title: 'Clássico dos Anos 80', type: 'movie', year: 1985 },
+                    { id: 'classic2', title: 'Clássico dos Anos 90', type: 'movie', year: 1995 },
+                    { id: 'classic3', title: 'Série Clássica', type: 'series', year: 1990 }
+                ];
+
+                grid.innerHTML = classicContent.map(item => this.createContentItem(item)).join('');
+            }
+
+            // Romances
+            async loadRomances() {
+                const grid = document.getElementById('romances-grid');
+                if (!grid) return;
+
+                const romanceContent = [
+                    { id: 'romance1', title: 'Romance Dramático', type: 'movie' },
+                    { id: 'romance2', title: 'Romance Comédia', type: 'movie' },
+                    { id: 'romance3', title: 'Romance Histórico', type: 'movie' },
+                    { id: 'romance4', title: 'Série Romântica', type: 'series' }
+                ];
+
+                grid.innerHTML = romanceContent.map(item => this.createContentItem(item)).join('');
+            }
+
+            // Nacionais
+            async loadNacionais() {
+                const grid = document.getElementById('nacionais-grid');
+                if (!grid) return;
+
+                const nationalContent = [
+                    { id: 'national1', title: 'Filme Nacional 1', type: 'movie' },
+                    { id: 'national2', title: 'Filme Nacional 2', type: 'movie' },
+                    { id: 'national3', title: 'Série Nacional', type: 'series' }
+                ];
+
+                grid.innerHTML = nationalContent.map(item => this.createContentItem(item)).join('');
+            }
+
+            // Create content item HTML
+            createContentItem(item) {
+                return `
+                    <div class="content-item" data-id="${item.id}" data-type="${item.type}">
+                        <div class="content-item-thumbnail">
+                            <img src="${item.thumbnail || 'https://via.placeholder.com/200x280/E50914/FFFFFF?text=Content'}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/200x280/E50914/FFFFFF?text=Content'">
+                            ${item.badge ? `<div class="content-item-badge">${item.badge}</div>` : ''}
+                            ${item.award ? `<div class="content-item-award">🏆 ${item.award}</div>` : ''}
+                        </div>
+                        <div class="content-item-info">
+                            <div class="content-item-title">${item.title}</div>
+                            <div class="content-item-meta">${item.type === 'series' ? 'Série' : 'Filme'}${item.year ? ` • ${item.year}` : ''}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Setup Saturday night schedule
+            setupSaturdayNightSchedule() {
+                const checkSaturdayNight = () => {
+                    const now = new Date();
+                    const day = now.getDay(); // 0 = Sunday, 6 = Saturday
+                    const hours = now.getHours();
+                    const minutes = now.getMinutes();
+                    
+                    const sabadoSection = document.getElementById('sabado-a-noite');
+                    if (!sabadoSection) return;
+
+                    // Show Saturday 16:59 to Sunday 11:59
+                    if (day === 6 && hours >= 16 && minutes >= 59) {
+                        sabadoSection.classList.remove('hidden');
+                    } else if (day === 0 && hours < 12) {
+                        sabadoSection.classList.remove('hidden');
+                    } else {
+                        sabadoSection.classList.add('hidden');
+                    }
+                };
+
+                // Check every minute
+                setInterval(checkSaturdayNight, 60000);
+                checkSaturdayNight(); // Initial check
+            }
+
+            // Setup novela search
+            setupNovelaSearch() {
+                const checkNovelaContent = () => {
+                    const hasNovelaContent = true; // Simulate finding novela content
+                    
+                    if (hasNovelaContent) {
+                        const novelaSection = document.getElementById('novela');
+                        if (novelaSection) {
+                            novelaSection.classList.remove('hidden');
+                            const grid = document.getElementById('novela-grid');
+                            if (grid) {
+                                const novelaContent = [
+                                    { id: 'novela1', title: 'Novela das 6', type: 'series' },
+                                    { id: 'novela2', title: 'Novela das 7', type: 'series' },
+                                    { id: 'novela3', title: 'Novela das 8', type: 'series' }
+                                ];
+                                grid.innerHTML = novelaContent.map(item => this.createContentItem(item)).join('');
+                            }
+                        }
+                    }
+                };
+
+                // Check every 11 minutes
+                setInterval(checkNovelaContent, 660000);
+                checkNovelaContent(); // Initial check
+            }
+
+            // Setup Top 10 search
+            setupTop10Search() {
+                const searchTop10 = () => {
+                    // Simulate searching for Top 10 Brazil content
+                    const foundNewContent = Math.random() > 0.7; // 30% chance of finding new content
+                    
+                    if (foundNewContent) {
+                        const grid = document.getElementById('top-10-brasileiro-grid');
+                        if (grid) {
+                            // Remove "Em Breve" badge from first item
+                            const firstItem = grid.querySelector('.content-item');
+                            if (firstItem) {
+                                const badge = firstItem.querySelector('.content-item-badge');
+                                if (badge) badge.remove();
+                            }
+                        }
+                    }
+                };
+
+                // Search every 7 minutes
+                setInterval(searchTop10, 420000);
+                searchTop10(); // Initial search
+            }
         }
     </script>
 </head>
@@ -679,6 +1044,94 @@
                 <h2 class="section-title">🔥 Continuar Assistindo</h2>
                 <div class="continue-watching-grid" id="continue-watching-grid">
                     <!-- Items will be dynamically added here -->
+                </div>
+            </section>
+
+            <!-- Não deixe de ver Section -->
+            <section class="section" id="nao-deixe-de-ver">
+                <h2 class="section-title">🔥 Não deixe de ver</h2>
+                <div class="content-grid" id="nao-deixe-de-ver-grid">
+                    <!-- Launch 2026 content will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Top 10 Brasileiro Section -->
+            <section class="section" id="top-10-brasileiro">
+                <h2 class="section-title">🏆 Top 10 Brasileiro</h2>
+                <div class="content-grid" id="top-10-brasileiro-grid">
+                    <!-- Top 10 Brazil content will be loaded here -->
+                </div>
+            </section>
+
+            <!-- As crianças amam Section -->
+            <section class="section" id="as-criancas-amam">
+                <h2 class="section-title">🎈 As crianças amam</h2>
+                <div class="content-grid" id="as-criancas-amam-grid">
+                    <!-- Kids content will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Sábado à noite Section -->
+            <section class="section hidden" id="sabado-a-noite">
+                <h2 class="section-title">🎬 Sábado à noite merece</h2>
+                <div class="content-grid" id="sabado-a-noite-grid">
+                    <!-- Saturday night content will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Premiados pela mídia Section -->
+            <section class="section" id="premiados-pela-midia">
+                <h2 class="section-title">🏆 Premiados pela mídia</h2>
+                <div class="content-grid" id="premiados-pela-midia-grid">
+                    <!-- Award-winning content will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Prepare sua pipoca Section -->
+            <section class="section" id="prepare-sua-pipoca">
+                <h2 class="section-title">🍿 Prepare sua pipoca e venha maratonar</h2>
+                <div class="content-grid" id="prepare-sua-pipoca-grid">
+                    <!-- Series content will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Negritude em destaque Section -->
+            <section class="section hidden" id="negritude-destaque">
+                <h2 class="section-title">✊ Negritude em destaque</h2>
+                <div class="content-grid" id="negritude-destaque-grid">
+                    <!-- Black culture content will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Nostalgia Section -->
+            <section class="section" id="nostalgia">
+                <h2 class="section-title">📼 Nostalgia que aquece o coração</h2>
+                <div class="content-grid" id="nostalgia-grid">
+                    <!-- Classic content will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Romances Section -->
+            <section class="section" id="romances">
+                <h2 class="section-title">💕 Romances para se inspirar</h2>
+                <div class="content-grid" id="romances-grid">
+                    <!-- Romance content will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Nacionais Section -->
+            <section class="section" id="nacionais">
+                <h2 class="section-title">🇧🇷 Nacionais de sucesso</h2>
+                <div class="content-grid" id="nacionais-grid">
+                    <!-- National content will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Novela Section -->
+            <section class="section hidden" id="novela">
+                <h2 class="section-title">📺 Novela é sempre bem vinda</h2>
+                <div class="content-grid" id="novela-grid">
+                    <!-- Soap opera content will be loaded here -->
                 </div>
             </section>
         </main>
