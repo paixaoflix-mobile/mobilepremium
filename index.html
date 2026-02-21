@@ -132,6 +132,132 @@
             line-height: 1.8;
         }
 
+        /* Continue Watching Section */
+        .continue-watching {
+            padding: 60px 40px;
+            background: #0F171E;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #E50914, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .continue-watching-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .continue-item {
+            background: linear-gradient(135deg, rgba(229, 9, 20, 0.1) 0%, rgba(15, 23, 30, 0.8) 100%);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(229, 9, 20, 0.2);
+        }
+
+        .continue-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(229, 9, 20, 0.3);
+        }
+
+        .continue-item-thumbnail {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(45deg, #E50914, #ff6b6b);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .continue-item-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .continue-item-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .continue-item-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #E50914, #ff6b6b);
+            transition: width 0.3s ease;
+        }
+
+        .continue-item-info {
+            padding: 15px;
+        }
+
+        .continue-item-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #FFFFFF;
+        }
+
+        .continue-item-meta {
+            font-size: 0.9rem;
+            color: #B3B3B3;
+            margin-bottom: 10px;
+        }
+
+        .continue-item-time {
+            font-size: 0.8rem;
+            color: #E50914;
+            font-weight: bold;
+        }
+
+        .continue-item-play {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(229, 9, 20, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .continue-item:hover .continue-item-play {
+            opacity: 1;
+        }
+
+        .empty-continue-watching {
+            text-align: center;
+            padding: 40px;
+            color: #B3B3B3;
+            font-size: 1.1rem;
+        }
+
+        .empty-continue-watching-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
         @media (max-width: 768px) {
             .header {
                 padding: 15px 20px;
@@ -162,8 +288,223 @@
             .welcome p {
                 font-size: 1rem;
             }
+
+            .continue-watching {
+                padding: 40px 20px;
+            }
+
+            .continue-watching-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
         }
     </style>
+    <script>
+        // Continue Watching functionality
+        class ContinueWatching {
+            constructor() {
+                this.storageKey = 'webtv_continue_watching';
+                this.maxItems = 5;
+                this.init();
+            }
+
+            init() {
+                this.loadContinueWatching();
+                this.setupEventListeners();
+            }
+
+            // Save progress to localStorage
+            saveProgress(contentId, title, type, progress, duration, thumbnail) {
+                const watchingData = this.getWatchingData();
+                
+                // Remove existing item if it exists
+                const existingIndex = watchingData.findIndex(item => item.id === contentId);
+                if (existingIndex > -1) {
+                    watchingData.splice(existingIndex, 1);
+                }
+
+                // Add new item at the beginning
+                watchingData.unshift({
+                    id: contentId,
+                    title: title,
+                    type: type, // 'movie' or 'episode'
+                    progress: progress, // percentage (0-100)
+                    duration: duration, // total duration in seconds
+                    currentTime: (progress / 100) * duration, // current time in seconds
+                    thumbnail: thumbnail,
+                    lastWatched: new Date().toISOString()
+                });
+
+                // Keep only the last 5 items
+                if (watchingData.length > this.maxItems) {
+                    watchingData.splice(this.maxItems);
+                }
+
+                // Save to localStorage
+                localStorage.setItem(this.storageKey, JSON.stringify(watchingData));
+                
+                // Refresh the display
+                this.loadContinueWatching();
+            }
+
+            // Get watching data from localStorage
+            getWatchingData() {
+                const data = localStorage.getItem(this.storageKey);
+                return data ? JSON.parse(data) : [];
+            }
+
+            // Load and display continue watching items
+            loadContinueWatching() {
+                const watchingData = this.getWatchingData();
+                const grid = document.getElementById('continue-watching-grid');
+                
+                if (!grid) return;
+
+                if (watchingData.length === 0) {
+                    grid.innerHTML = `
+                        <div class="empty-continue-watching">
+                            <div class="empty-continue-watching-icon">📺</div>
+                            <p>Você ainda não começou a assistir nada.</p>
+                            <p>Explore nosso conteúdo e comece a assistir!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = watchingData.map(item => this.createContinueItem(item)).join('');
+                this.setupItemClickHandlers();
+            }
+
+            // Create HTML for continue watching item
+            createContinueItem(item) {
+                const progressPercent = Math.min(item.progress, 100);
+                const currentTime = this.formatTime(item.currentTime);
+                const totalTime = this.formatTime(item.duration);
+                
+                return `
+                    <div class="continue-item" data-id="${item.id}" data-type="${item.type}">
+                        <div class="continue-item-thumbnail">
+                            <img src="${item.thumbnail}" alt="${item.title}" onerror="this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 180\"><rect width=\"300\" height=\"180\" fill=\"%23E50914\"/><text x=\"50%\" y=\"50%\" text-anchor=\"middle\" dy=\".3em\" fill=\"white\" font-size=\"20\">🎬</text></svg>'">
+                            <div class="continue-item-progress">
+                                <div class="continue-item-progress-bar" style="width: ${progressPercent}%"></div>
+                            </div>
+                            <div class="continue-item-play">▶</div>
+                        </div>
+                        <div class="continue-item-info">
+                            <div class="continue-item-title">${item.title}</div>
+                            <div class="continue-item-meta">${item.type === 'episode' ? 'Episódio' : 'Filme'}</div>
+                            <div class="continue-item-time">${currentTime} / ${totalTime}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Setup click handlers for continue watching items
+            setupItemClickHandlers() {
+                const items = document.querySelectorAll('.continue-item');
+                items.forEach(item => {
+                    item.addEventListener('click', () => {
+                        const id = item.dataset.id;
+                        const type = item.dataset.type;
+                        const watchingData = this.getWatchingData();
+                        const content = watchingData.find(item => item.id === id);
+                        
+                        if (content) {
+                            this.showContinueDialog(content);
+                        }
+                    });
+                });
+            }
+
+            // Show continue/restart dialog
+            showContinueDialog(content) {
+                const currentTime = this.formatTime(content.currentTime);
+                const totalTime = this.formatTime(content.duration);
+                
+                const message = `Você está em ${currentTime} de ${totalTime}\n\nDeseja continuar assistindo ou recomeçar?`;
+                
+                if (confirm(message)) {
+                    // Continue watching
+                    this.openPlayer(content.id, content.currentTime);
+                } else {
+                    // Restart
+                    this.openPlayer(content.id, 0);
+                }
+            }
+
+            // Open player with specific time
+            openPlayer(contentId, startTime) {
+                const playerUrl = `/player.html?id=${contentId}&start=${startTime}`;
+                window.location.href = playerUrl;
+            }
+
+            // Format time in MM:SS format
+            formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            // Setup event listeners
+            setupEventListeners() {
+                // Listen for custom events from player
+                window.addEventListener('message', (event) => {
+                    if (event.data && event.data.type === 'video_progress') {
+                        const { id, title, type, progress, duration, thumbnail } = event.data;
+                        this.saveProgress(id, title, type, progress, duration, thumbnail);
+                    }
+                });
+            }
+
+            // Clear all continue watching data
+            clearAll() {
+                localStorage.removeItem(this.storageKey);
+                this.loadContinueWatching();
+            }
+        }
+
+        // Initialize Continue Watching when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.continueWatching = new ContinueWatching();
+        });
+
+        // Example function to simulate progress (for testing)
+        function simulateProgress() {
+            const sampleData = [
+                {
+                    id: 'movie1',
+                    title: 'Filme de Ação',
+                    type: 'movie',
+                    progress: 75,
+                    duration: 7200, // 2 hours
+                    thumbnail: 'https://via.placeholder.com/300x180/E50914/FFFFFF?text=Filme+1'
+                },
+                {
+                    id: 'episode1',
+                    title: 'Série Episódio 1',
+                    type: 'episode',
+                    progress: 45,
+                    duration: 2400, // 40 minutes
+                    thumbnail: 'https://via.placeholder.com/300x180/E50914/FFFFFF?text=Série+1'
+                }
+            ];
+
+            sampleData.forEach(item => {
+                window.continueWatching.saveProgress(
+                    item.id,
+                    item.title,
+                    item.type,
+                    item.progress,
+                    item.duration,
+                    item.thumbnail
+                );
+            });
+        }
+    </script>
 </head>
 <body>
     <div class="app">
@@ -186,9 +527,40 @@
         </header>
 
         <main class="main-content">
-            <section class="welcome">
-                <h1>Bem-vindo ao WebTV Prime</h1>
-                <p>Escolha uma opção no menu acima para começar a explorar nosso conteúdo.</p>
+            <!-- Hero Section -->
+            <section class="hero" id="hero">
+                <div class="hero-content">
+                    <h1 class="hero-title" id="hero-title">🏠 Home</h1>
+                    <div class="hero-meta" id="hero-meta">
+                        <span class="match">100% Streaming</span>
+                        <span>2024</span>
+                        <span class="rating">🏠</span>
+                        <span id="hero-duration">Tudo em Um</span>
+                    </div>
+                    <div class="hero-buttons">
+                        <button class="btn btn-play" id="btn-play" onclick="window.location.href='/cinema.html'">
+                            <span>▶</span>
+                            Explorar Conteúdo
+                        </button>
+                        <button class="btn-info" id="btn-info" onclick="alert('Bem-vindo ao WebTV Prime! Melhor plataforma de streaming.')">
+                            <span>ℹ</span>
+                            Sobre a Plataforma
+                        </button>
+                    </div>
+                    <p class="hero-description" id="hero-description">
+                        Bem-vindo ao WebTV Prime! Sua plataforma definitiva de streaming. 
+                        Filmes, séries, conteúdo infantil e muito mais. 
+                        A melhor experiência de entretenimento na palma da sua mão.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Continue Watching Section -->
+            <section class="continue-watching" id="continue-watching">
+                <h2 class="section-title">🔥 Continuar Assistindo</h2>
+                <div class="continue-watching-grid" id="continue-watching-grid">
+                    <!-- Items will be dynamically added here -->
+                </div>
             </section>
         </main>
     </div>
