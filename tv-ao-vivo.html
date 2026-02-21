@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TV ao Vivo - WebTV</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+        body{background:#141414;color:white;overflow-x:hidden}
+        .header{position:fixed;top:0;width:100%;padding:20px 50px;background:linear-gradient(180deg,rgba(20,20,20,0.7) 10%,rgba(20,20,20,0) 100%);z-index:1000;display:flex;justify-content:space-between;align-items:center}
+        .logo{font-size:24px;font-weight:bold;color:#e50914}
+        .nav{display:flex;gap:30px}
+        .nav a{color:white;text-decoration:none;font-size:14px;transition:color .3s}
+        .nav a:hover{color:#e50914}
+        .nav a.active{color:#e50914;font-weight:bold}
+        .nav-right{display:flex;align-items:center;gap:20px}
+        .search-box{background:rgba(255,255,255,.1);border:none;padding:8px 15px;border-radius:4px;color:white;width:200px}
+        .search-box::placeholder{color:rgba(255,255,255,.7)}
+        .user-icon{width:32px;height:32px;background:#e50914;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:bold}
+        .content{margin-top:80px;padding:20px 50px}
+        .live-hero{background:linear-gradient(135deg,#e50914 0%,#f40612 100%);padding:60px 50px;border-radius:12px;margin-bottom:40px;text-align:center;position:relative}
+        .live-indicator{position:absolute;top:20px;right:20px;background:red;color:white;padding:8px 16px;border-radius:20px;font-weight:bold;animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+        .live-title{font-size:48px;font-weight:bold;margin-bottom:20px}
+        .live-description{font-size:18px;line-height:1.5;max-width:600px;margin:0 auto}
+        .channels-section{margin-bottom:40px}
+        .section-title{font-size:24px;margin-bottom:20px;font-weight:bold}
+        .channels-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:15px}
+        .channel-card{background:#333;border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all .3s;border:2px solid transparent}
+        .channel-card:hover{background:#444;transform:translateY(-5px);border-color:#e50914}
+        .channel-logo{width:80px;height:80px;background:#555;border-radius:50%;margin:0 auto 15px;display:flex;align-items:center;justify-content:center;font-size:32px}
+        .channel-name{font-size:16px;font-weight:bold;margin-bottom:8px}
+        .channel-info{font-size:12px;color:#ccc;margin-bottom:10px}
+        .watch-btn{background:#e50914;color:white;border:none;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:bold;cursor:pointer;transition:background .3s}
+        .watch-btn:hover{background:#f40612}
+        .live-badge{position:absolute;top:10px;right:10px;background:red;color:white;padding:4px 8px;border-radius:4px;font-size:10px;font-weight:bold}
+        .schedule-section{margin-bottom:40px}
+        .schedule-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+        .schedule-card{background:#333;border-radius:12px;padding:20px;position:relative}
+        .schedule-time{font-size:14px;color:#e50914;font-weight:bold;margin-bottom:10px}
+        .schedule-title{font-size:16px;font-weight:bold;margin-bottom:8px}
+        .schedule-channel{font-size:12px;color:#ccc;margin-bottom:10px}
+        .schedule-description{font-size:12px;color:#aaa;line-height:1.4}
+        .loading{text-align:center;padding:40px;font-size:18px;color:#e50914}
+        @media (max-width:768px){.header{padding:15px 20px}.nav{display:none}.search-box{width:120px}.content{padding:20px}.live-hero{padding:40px 20px}.live-title{font-size:32px}.channels-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.schedule-grid{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">🔥 WebTV</div>
+        <nav class="nav">
+            <a href="index.html">Home</a>
+            <a href="cinema.html">Cinema</a>
+            <a href="series.html">Séries</a>
+            <a href="movies.html">Filmes</a>
+            <a href="filmes-kids.html">Filmes Kids</a>
+            <a href="series-kids.html">Séries Kids</a>
+            <a href="mylist.html">Meus Favoritos</a>
+            <a href="tv-ao-vivo.html" class="active">TV ao Vivo</a>
+        </nav>
+        <div class="nav-right">
+            <input type="text" class="search-box" placeholder="Pesquisar canais">
+            <div class="user-icon">U</div>
+        </div>
+    </header>
+    <div class="content">
+        <div class="live-hero">
+            <div class="live-indicator">🔴 AO VIVO</div>
+            <h1 class="live-title">📺 TV ao Vivo</h1>
+            <p class="live-description">
+                Assista aos melhores canais de TV ao vivo 24 horas por dia. 
+                Notícias, esportes, entretenimento e muito mais em tempo real.
+            </p>
+        </div>
+        <div class="channels-section">
+            <h2 class="section-title">Canais Populares</h2>
+            <div class="channels-grid" id="popular-channels">
+                <div class="loading">Carregando canais...</div>
+            </div>
+        </div>
+        <div class="channels-section">
+            <h2 class="section-title">Canais de Notícias</h2>
+            <div class="channels-grid" id="news-channels">
+                <div class="loading">Carregando canais de notícias...</div>
+            </div>
+        </div>
+        <div class="channels-section">
+            <h2 class="section-title">Canais de Esportes</h2>
+            <div class="channels-grid" id="sports-channels">
+                <div class="loading">Carregando canais de esportes...</div>
+            </div>
+        </div>
+        <div class="schedule-section">
+            <h2 class="section-title">Programação de Hoje</h2>
+            <div class="schedule-grid" id="today-schedule">
+                <div class="loading">Carregando programação...</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const channels=[
+            {id:1,name:'WebTV News',logo:'📰',category:'Notícias',viewers:12500,live:true},
+            {id:2,name:'WebTV Sports',logo:'⚽',category:'Esportes',viewers:8900,live:true},
+            {id:3,name:'WebTV Movies',logo:'🎬',category:'Filmes',viewers:15600,live:true},
+            {id:4,name:'WebTV Kids',logo:'🎈',category:'Infantil',viewers:6700,live:true},
+            {id:5,name:'WebTV Music',logo:'🎵',category:'Música',viewers:9800,live:true},
+            {id:6,name:'WebTV Documentary',logo:'📖',category:'Documentários',viewers:4500,live:true},
+            {id:7,name:'WebTV Comedy',logo:'😄',category:'Comédia',viewers:7200,live:true},
+            {id:8,name:'WebTV Cooking',logo:'👨‍🍳',category:'Culinária',viewers:5600,live:true}
+        ];
+        const schedule=[
+            {time:'08:00',title:'Manhã WebTV',channel:'WebTV News',description:'Notícias e atualidades da manhã'},
+            {time:'10:00',title:'Esporte ao Vivo',channel:'WebTV Sports',description:'Cobertura ao vivo dos principais eventos esportivos'},
+            {time:'12:00',title:'Jornal do Meio-Dia',channel:'WebTV News',description:'Resumo das principais notícias do dia'},
+            {time:'14:00',title:'Sessão da Tarde',channel:'WebTV Movies',description:'Os melhores filmes da tarde'},
+            {time:'16:00',title:'Kids Time',channel:'WebTV Kids',description:'Programação especial para crianças'},
+            {time:'18:00',title:'Show de Talentos',channel:'WebTV Music',description:'Os melhores artistas musicais ao vivo'},
+            {time:'20:00',title:'Jornal da Noite',channel:'WebTV News',description:'As últimas notícias do dia'},
+            {time:'22:00',title:'Comédia Show',channel:'WebTV Comedy',description:'Os melhores comédiantes do momento'}
+        ];
+        function createChannelCard(channel){const c=document.createElement('div');c.className='channel-card';c.innerHTML=`${channel.live?'<div class="live-badge">AO VIVO</div>':''}<div class="channel-logo">${channel.logo}</div><div class="channel-name">${channel.name}</div><div class="channel-info">${channel.category} • ${channel.viewers.toLocaleString()} assistindo</div><button class="watch-btn" onclick="watchChannel(${channel.id})">Assistir Agora</button>`;return c}
+        function createScheduleCard(item){const c=document.createElement('div');c.className='schedule-card';c.innerHTML=`<div class="schedule-time">${item.time}</div><div class="schedule-title">${item.title}</div><div class="schedule-channel">${item.channel}</div><div class="schedule-description">${item.description}</div>`;return c}
+        function loadPopularChannels(){const g=document.getElementById('popular-channels');g.innerHTML='';channels.slice(0,4).forEach(ch=>{const c=createChannelCard(ch);g.appendChild(c)})}
+        function loadNewsChannels(){const g=document.getElementById('news-channels');g.innerHTML='';channels.filter(ch=>ch.category==='Notícias').forEach(ch=>{const c=createChannelCard(ch);g.appendChild(c)})}
+        function loadSportsChannels(){const g=document.getElementById('sports-channels');g.innerHTML='';channels.filter(ch=>ch.category==='Esportes').forEach(ch=>{const c=createChannelCard(ch);g.appendChild(c)})}
+        function loadTodaySchedule(){const g=document.getElementById('today-schedule');g.innerHTML='';schedule.forEach(item=>{const c=createScheduleCard(item);g.appendChild(c)})}
+        function watchChannel(channelId){const channel=channels.find(ch=>ch.id===channelId);if(channel){console.log('Assistindo ao canal:',channel);alert(`Agora assistindo: ${channel.name}`)}}
+        document.addEventListener('DOMContentLoaded',()=>{loadPopularChannels();loadNewsChannels();loadSportsChannels();loadTodaySchedule();document.querySelector('.search-box').addEventListener('input',e=>{const s=e.target.value.toLowerCase();if(s.length>2){const filtered=channels.filter(ch=>ch.name.toLowerCase().includes(s)||ch.category.toLowerCase().includes(s));console.log('Canais encontrados:',filtered)}})});
+    </script>
+</body>
+</html>

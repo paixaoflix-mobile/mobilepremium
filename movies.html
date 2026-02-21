@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filmes - WebTV</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #141414;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            background: linear-gradient(180deg, rgba(20,20,20,0.7) 10%, rgba(20,20,20,0) 100%);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e50914;
+        }
+
+        .nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover {
+            color: #e50914;
+        }
+
+        .nav a.active {
+            color: #e50914;
+            font-weight: bold;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .search-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            color: white;
+            width: 200px;
+        }
+
+        .search-box::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .user-icon {
+            width: 32px;
+            height: 32px;
+            background: #e50914;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Content */
+        .content {
+            margin-top: 80px;
+            padding: 20px 50px;
+        }
+
+        /* Movies Hero */
+        .movies-hero {
+            height: 60vh;
+            background: linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%),
+                        url('https://image.tmdb.org/t/p/original/8Y43POkjj2GIcHTlHtMvBZaNuh.jpg') center/cover;
+            display: flex;
+            align-items: center;
+            padding-left: 50px;
+            position: relative;
+            margin-bottom: 40px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 500px;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .hero-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .match {
+            color: #46d369;
+            font-weight: bold;
+        }
+
+        .rating {
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-play {
+            background: white;
+            color: black;
+        }
+
+        .btn-play:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .btn-info {
+            background: rgba(109, 109, 110, 0.7);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: rgba(109, 109, 110, 0.5);
+        }
+
+        .hero-description {
+            font-size: 14px;
+            line-height: 1.4;
+            max-width: 400px;
+        }
+
+        /* Categories */
+        .categories {
+            margin-bottom: 40px;
+        }
+
+        .category-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .category-scroll {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .category-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .category-scroll::-webkit-scrollbar-track {
+            background: #333;
+        }
+
+        .category-scroll::-webkit-scrollbar-thumb {
+            background: #666;
+            border-radius: 4px;
+        }
+
+        .category-item {
+            flex-shrink: 0;
+            background: #333;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .category-item:hover {
+            background: #444;
+        }
+
+        .category-item.active {
+            background: white;
+            color: black;
+        }
+
+        /* Movies Grid */
+        .movies-section {
+            margin-bottom: 40px;
+        }
+
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .movie-card {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s;
+            aspect-ratio: 2/3;
+        }
+
+        .movie-card:hover {
+            transform: scale(1.05);
+        }
+
+        .movie-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .movie-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .movie-card:hover .movie-overlay {
+            opacity: 1;
+        }
+
+        .movie-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .movie-info {
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #e50914;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .nav {
+                display: none;
+            }
+
+            .search-box {
+                width: 120px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .movies-hero {
+                height: 40vh;
+                padding-left: 20px;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .movies-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">🔥 WebTV</div>
+        <nav class="nav">
+            <a href="index.html">Home</a>
+            <a href="cinema.html">Cinema</a>
+            <a href="series.html">Séries</a>
+            <a href="movies.html" class="active">Filmes</a>
+            <a href="filmes-kids.html">Filmes Kids</a>
+            <a href="series-kids.html">Séries Kids</a>
+            <a href="mylist.html">Meus Favoritos</a>
+            <a href="tv-ao-vivo.html">TV ao Vivo</a>
+        </nav>
+        <div class="nav-right">
+            <input type="text" class="search-box" placeholder="Pesquisar filmes">
+            <div class="user-icon">U</div>
+        </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+        <!-- Movies Hero -->
+        <div class="movies-hero" id="movies-hero">
+            <div class="hero-content">
+                <h1 class="hero-title" id="hero-title">🎬 Filmes</h1>
+                <div class="hero-meta" id="hero-meta">
+                    <span class="match">98% Correspondente</span>
+                    <span id="hero-year">2023</span>
+                    <span class="rating">16</span>
+                </div>
+                <div class="hero-buttons">
+                    <button class="btn-play" id="btn-play">
+                        <span>▶</span>
+                        Assistir Agora
+                    </button>
+                    <button class="btn-info" id="btn-info">
+                        <span>ℹ</span>
+                        Mais Informações
+                    </button>
+                </div>
+                <p class="hero-description" id="hero-description">
+                    Os melhores filmes de todos os gêneros. Ação, comédia, drama, ficção científica, terror e muito mais para você curtir.
+                </p>
+            </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="categories">
+            <div class="category-scroll">
+                <div class="category-item active">Todos</div>
+                <div class="category-item">Ação</div>
+                <div class="category-item">Comédia</div>
+                <div class="category-item">Drama</div>
+                <div class="category-item">Ficção Científica</div>
+                <div class="category-item">Terror</div>
+                <div class="category-item">Romance</div>
+                <div class="category-item">Animação</div>
+                <div class="category-item">Documentário</div>
+            </div>
+        </div>
+
+        <!-- Popular Movies -->
+        <div class="movies-section">
+            <h2 class="category-title">Filmes Populares</h2>
+            <div class="movies-grid" id="popular-movies">
+                <div class="loading">Carregando filmes...</div>
+            </div>
+        </div>
+
+        <!-- New Releases -->
+        <div class="movies-section">
+            <h2 class="category-title">Lançamentos</h2>
+            <div class="movies-grid" id="new-movies">
+                <div class="loading">Carregando lançamentos...</div>
+            </div>
+        </div>
+
+        <!-- Brazilian Movies -->
+        <div class="movies-section">
+            <h2 class="category-title">Filmes Brasileiros</h2>
+            <div class="movies-grid" id="brazilian-movies">
+                <div class="loading">Carregando filmes brasileiros...</div>
+            </div>
+        </div>
+
+        <!-- Action Movies -->
+        <div class="movies-section">
+            <h2 class="category-title">Filmes de Ação</h2>
+            <div class="movies-grid" id="action-movies">
+                <div class="loading">Carregando filmes de ação...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = 'b275ce8e1a6b3d5d879bb0907e4f56ad';
+        const BASE_URL = 'https://api.themoviedb.org/3';
+
+        async function loadPopularMovies() {
+            try {
+                const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=pt-BR&page=1`);
+                const data = await response.json();
+                
+                const grid = document.getElementById('popular-movies');
+                grid.innerHTML = '';
+                
+                data.results.slice(0, 12).forEach(movie => {
+                    const card = createMovieCard(movie);
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar filmes populares:', error);
+                document.getElementById('popular-movies').innerHTML = '<div class="loading">Erro ao carregar filmes</div>';
+            }
+        }
+
+        async function loadNewMovies() {
+            try {
+                const response = await fetch(`${BASE_URL}/movie/now_playing?api_key=${API_KEY}&language=pt-BR&page=1`);
+                const data = await response.json();
+                
+                const grid = document.getElementById('new-movies');
+                grid.innerHTML = '';
+                
+                data.results.slice(0, 12).forEach(movie => {
+                    const card = createMovieCard(movie);
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar lançamentos:', error);
+                document.getElementById('new-movies').innerHTML = '<div class="loading">Erro ao carregar lançamentos</div>';
+            }
+        }
+
+        async function loadBrazilianMovies() {
+            try {
+                const response = await fetch(`${BASE_URL}/discover/movie?api_key=${API_KEY}&language=pt-BR&with_original_language=pt&page=1`);
+                const data = await response.json();
+                
+                const grid = document.getElementById('brazilian-movies');
+                grid.innerHTML = '';
+                
+                data.results.slice(0, 12).forEach(movie => {
+                    const card = createMovieCard(movie);
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar filmes brasileiros:', error);
+                document.getElementById('brazilian-movies').innerHTML = '<div class="loading">Erro ao carregar filmes brasileiros</div>';
+            }
+        }
+
+        async function loadActionMovies() {
+            try {
+                const response = await fetch(`${BASE_URL}/discover/movie?api_key=${API_KEY}&language=pt-BR&with_genres=28&page=1`);
+                const data = await response.json();
+                
+                const grid = document.getElementById('action-movies');
+                grid.innerHTML = '';
+                
+                data.results.slice(0, 12).forEach(movie => {
+                    const card = createMovieCard(movie);
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar filmes de ação:', error);
+                document.getElementById('action-movies').innerHTML = '<div class="loading">Erro ao carregar filmes de ação</div>';
+            }
+        }
+
+        function createMovieCard(movie) {
+            const card = document.createElement('div');
+            card.className = 'movie-card';
+            
+            const posterPath = movie.poster_path 
+                ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                : 'https://via.placeholder.com/500x750/333/fff?text=Sem+Imagem';
+            
+            const title = movie.title;
+            const year = movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A';
+            const rating = movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A';
+            
+            card.innerHTML = `
+                <img src="${posterPath}" alt="${title}">
+                <div class="movie-overlay">
+                    <div class="movie-title">${title}</div>
+                    <div class="movie-info">⭐ ${rating} • ${year}</div>
+                </div>
+            `;
+            
+            card.addEventListener('click', () => {
+                console.log('Filme clicado:', movie);
+            });
+            
+            return card;
+        }
+
+        async function loadMoviesHero() {
+            try {
+                const response = await fetch('./cinema.json');
+                const data = await response.json();
+                
+                if (data.length > 0) {
+                    const movie = data[0];
+                    const tmdbData = await getTMDBData('movie', movie.tmdb_id);
+                    
+                    if (tmdbData) {
+                        updateMoviesHero(tmdbData, movie);
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao carregar hero:', error);
+            }
+        }
+
+        async function getTMDBData(type, id) {
+            try {
+                const url = type === 'movie' 
+                    ? `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=pt-BR`
+                    : `${BASE_URL}/tv/${id}?api_key=${API_KEY}&language=pt-BR`;
+                
+                const response = await fetch(url);
+                return await response.json();
+            } catch (error) {
+                console.error('Erro ao buscar dados TMDB:', error);
+                return null;
+            }
+        }
+
+        function updateMoviesHero(data, localData) {
+            const hero = document.getElementById('movies-hero');
+            const title = document.getElementById('hero-title');
+            const year = document.getElementById('hero-year');
+            const description = document.getElementById('hero-description');
+            const btnPlay = document.getElementById('btn-play');
+            
+            title.textContent = data.title || localData.titulo;
+            year.textContent = data.release_date ? new Date(data.release_date).getFullYear() : '2023';
+            description.textContent = data.overview ? data.overview.substring(0, 200) + '...' : 'Filme em destaque com experiência cinematográfica completa.';
+            
+            if (data.backdrop_path) {
+                hero.style.background = `linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%),
+                                      url('https://image.tmdb.org/t/p/original${data.backdrop_path}') center/cover`;
+            }
+            
+            btnPlay.onclick = () => {
+                if (localData.url) {
+                    window.open(localData.url, '_blank');
+                }
+            };
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPopularMovies();
+            loadNewMovies();
+            loadBrazilianMovies();
+            loadActionMovies();
+            loadMoviesHero();
+            
+            // Categorias
+            document.querySelectorAll('.category-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Busca
+            document.querySelector('.search-box').addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                if (searchTerm.length > 2) {
+                    console.log('Buscando filmes:', searchTerm);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

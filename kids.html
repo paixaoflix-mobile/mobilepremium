@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebTV Prime - Kids</title>
+    <meta name="description" content="WebTV Prime Kids - Conteúdo infantil seguro e educativo para crianças">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: #0F171E; color: white; overflow-x: hidden; }
+        .header { position: fixed; top: 0; width: 100%; background: linear-gradient(180deg, rgba(15, 23, 30, 0.9) 0%, rgba(15, 23, 30, 0.7) 100%); backdrop-filter: blur(10px); z-index: 1000; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 28px; font-weight: bold; color: #E50914; text-decoration: none; }
+        .nav { display: flex; gap: 30px; align-items: center; }
+        .nav a { color: white; text-decoration: none; font-size: 16px; font-weight: 500; transition: color 0.3s; }
+        .nav a:hover { color: #E50914; }
+        .nav a.active { color: #E50914; font-weight: bold; }
+        .user-menu { display: flex; align-items: center; gap: 20px; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .hero { position: relative; height: 80vh; background: linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%); display: flex; align-items: center; padding-left: 60px; overflow: hidden; transition: all 0.3s ease; }
+        .hero-content { max-width: 600px; z-index: 2; }
+        .hero-title { font-size: 64px; font-weight: bold; margin-bottom: 20px; line-height: 1.1; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
+        .hero-meta { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; font-size: 14px; }
+        .match { color: #46D369; font-weight: bold; }
+        .rating { border: 1px solid rgba(255,255,255,0.4); padding: 2px 6px; border-radius: 3px; }
+        .hero-buttons { display: flex; gap: 15px; margin-bottom: 30px; }
+        .btn { padding: 12px 30px; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px; }
+        .btn-play { background: white; color: black; }
+        .btn-play:hover { background: rgba(255,255,255,0.8); }
+        .btn-info { background: rgba(109,109,110,0.7); color: white; }
+        .btn-info:hover { background: rgba(109,109,110,0.5); }
+        .hero-description { font-size: 16px; line-height: 1.5; max-width: 500px; color: rgba(255,255,255,0.9); }
+        .sections { padding: 60px 40px; max-width: 1400px; margin: 0 auto; }
+        .section { margin-bottom: 60px; }
+        .section-title { font-size: 32px; font-weight: bold; margin-bottom: 30px; color: white; }
+        .horizontal-scroll { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.2); }
+        .horizontal-scroll::-webkit-scrollbar { height: 8px; }
+        .horizontal-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); }
+        .horizontal-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+        .movie-card { flex-shrink: 0; width: 250px; height: 140px; border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.3s ease; position: relative; }
+        .movie-card:hover { transform: scale(1.05); }
+        .movie-card img { width: 100%; height: 100%; object-fit: cover; }
+        .movie-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding: 20px; color: white; opacity: 0; transition: opacity 0.3s ease; }
+        .movie-card:hover .movie-overlay { opacity: 1; }
+        .movie-title { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
+        .sync-icon { position: absolute; top: 10px; right: 10px; background: rgba(0, 0, 0, 0.7); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: white; opacity: 0; transition: all 0.3s ease; cursor: pointer; z-index: 5; }
+        .sync-icon:hover { background: #E50914; transform: rotate(180deg); }
+        .movie-card:hover .sync-icon { opacity: 1; }
+        .loading { text-align: center; padding: 40px; font-size: 18px; color: #E50914; }
+        @media (max-width: 768px) { .header { padding: 15px 20px; } .nav { display: flex; gap: 30px; align-items: center; } .hero { height: 60vh; padding-left: 20px; } .hero-title { font-size: 36px; } .sections { padding: 40px 20px; } .movie-card { width: 200px; height: 120px; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(229, 9, 20, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(229, 9, 20, 0); } 100% { box-shadow: 0 0 0 0 rgba(229, 9, 20, 0); } }
+        .pulse { animation: pulse 2s infinite; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="/" class="logo">🔥 WebTV Prime</a>
+        <nav class="nav">
+            <a href="/">Home</a>
+            <a href="/cinema">Cinema</a>
+            <a href="/series">Séries</a>
+            <a href="/filmes">Filmes</a>
+            <a href="/filmes-kids">Filmes Kids</a>
+            <a href="/series-kids">Séries Kids</a>
+            <a href="/mylist">Meus Favoritos</a>
+            <a href="/tv-ao-vivo">TV ao Vivo</a>
+            <a href="/player.html">Player</a>
+        </nav>
+    </header>
+
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <h1 class="hero-title" id="hero-title">🎈 Kids</h1>
+            <div class="hero-meta" id="hero-meta">
+                <span class="match">100% Infantil</span>
+                <span>2024</span>
+                <span class="rating">Livre</span>
+                <span id="hero-duration">Diversão Garantida</span>
+            </div>
+            <div class="hero-buttons">
+                <button class="btn btn-play" id="btn-play" onclick="window.location.href='/player.html'">
+                    <span>▶</span> Assistir Kids
+                </button>
+                <button class="btn-info" id="btn-info" onclick="alert('Bem-vindo ao Kids! Conteúdo seguro e divertido para toda a família.')">
+                    <span>ℹ</span> Sobre o Kids
+                </button>
+            </div>
+            <p class="hero-description" id="hero-description">
+                Um mundo mágico de aventuras e diversão para crianças de todas as idades. 
+                Filmes, séries e desenhos animados educativos e seguros. 
+                Conteúdo aprovado pelos pais e amado pelas crianças.
+            </p>
+        </div>
+    </section>
+
+    <div class="sections">
+        <section class="section">
+            <h2 class="section-title">🎈 Filmes Infantis</h2>
+            <div class="horizontal-scroll" id="kids-movies">
+                <div class="loading">Carregando filmes infantis...</div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">📺 Séries Infantis</h2>
+            <div class="horizontal-scroll" id="kids-series">
+                <div class="loading">Carregando séries infantis...</div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">🎨 Desenhos Animados</h2>
+            <div class="horizontal-scroll" id="animation">
+                <div class="loading">Carregando desenhos animados...</div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">📚 Educativos</h2>
+            <div class="horizontal-scroll" id="educational">
+                <div class="loading">Carregando conteúdo educativo...</div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const API_KEY = 'b275ce8e1a6b3d5d879bb0907e4f56ad';
+        const BASE_URL = 'https://api.themoviedb.org/3';
+        const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/original';
+        const IMAGE_W500_URL = 'https://image.tmdb.org/t/p/w500';
+        let currentHeroMovie = null;
+
+        async function fetchKidsMovies() {
+            try {
+                const response = await fetch(`${BASE_URL}/discover/movie?api_key=${API_KEY}&language=pt-BR&with_genres=10751&sort_by=popularity.desc&page=1`);
+                const data = await response.json();
+                const container = document.getElementById('kids-movies');
+                container.innerHTML = '';
+                data.results.slice(0, 10).forEach(movie => container.appendChild(createMovieCard(movie)));
+            } catch (error) {
+                document.getElementById('kids-movies').innerHTML = '<div class="loading">Erro ao carregar filmes</div>';
+            }
+        }
+
+        async function fetchKidsSeries() {
+            try {
+                const response = await fetch(`${BASE_URL}/discover/tv?api_key=${API_KEY}&language=pt-BR&with_genres=10762&sort_by=popularity.desc&page=1`);
+                const data = await response.json();
+                const container = document.getElementById('kids-series');
+                container.innerHTML = '';
+                data.results.slice(0, 10).forEach(series => container.appendChild(createMovieCard(series)));
+            } catch (error) {
+                document.getElementById('kids-series').innerHTML = '<div class="loading">Erro ao carregar séries</div>';
+            }
+        }
+
+        async function fetchAnimation() {
+            try {
+                const response = await fetch(`${BASE_URL}/discover/movie?api_key=${API_KEY}&language=pt-BR&with_genres=16&sort_by=popularity.desc&page=1`);
+                const data = await response.json();
+                const container = document.getElementById('animation');
+                container.innerHTML = '';
+                data.results.slice(0, 10).forEach(movie => container.appendChild(createMovieCard(movie)));
+            } catch (error) {
+                document.getElementById('animation').innerHTML = '<div class="loading">Erro ao carregar animações</div>';
+            }
+        }
+
+        async function fetchEducational() {
+            try {
+                const response = await fetch(`${BASE_URL}/discover/movie?api_key=${API_KEY}&language=pt-BR&with_genres=99&sort_by=popularity.desc&page=1`);
+                const data = await response.json();
+                const container = document.getElementById('educational');
+                container.innerHTML = '';
+                data.results.slice(0, 10).forEach(movie => container.appendChild(createMovieCard(movie)));
+            } catch (error) {
+                document.getElementById('educational').innerHTML = '<div class="loading">Erro ao carregar conteúdo educativo</div>';
+            }
+        }
+
+        function createMovieCard(content) {
+            const card = document.createElement('div');
+            card.className = 'movie-card fade-in';
+            const posterPath = content.poster_path ? `${IMAGE_W500_URL}${content.poster_path}` : 'https://via.placeholder.com/250x140/333/fff?text=Sem+Imagem';
+            const title = content.title || content.name || 'Título não disponível';
+            const year = content.release_date ? new Date(content.release_date).getFullYear() : content.first_air_date ? new Date(content.first_air_date).getFullYear() : 'N/A';
+            const rating = content.vote_average ? content.vote_average.toFixed(1) : 'N/A';
+            
+            card.innerHTML = `
+                <img src="${posterPath}" alt="${title}">
+                <div class="movie-overlay">
+                    <div class="movie-title">${title}</div>
+                    <div class="movie-info">⭐ ${rating} • ${year}</div>
+                </div>
+                <div class="sync-icon" title="Sincronizar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 4v6h-6"></path>
+                        <path d="M1 20v-6h6"></path>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                </div>
+            `;
+            
+            card.addEventListener('click', () => selectMovieForHero(content));
+            return card;
+        }
+
+        async function selectMovieForHero(content) {
+            currentHeroMovie = content;
+            updateHero(content);
+            document.querySelector('.hero').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function updateHero(content) {
+            const hero = document.getElementById('hero');
+            const title = content.title || content.name || 'Título não disponível';
+            document.getElementById('hero-title').textContent = title;
+            document.getElementById('hero-year').textContent = content.release_date ? new Date(content.release_date).getFullYear() : content.first_air_date ? new Date(content.first_air_date).getFullYear() : 'N/A';
+            const runtime = content.runtime || 45;
+            const hours = Math.floor(runtime / 60);
+            const minutes = runtime % 60;
+            document.getElementById('hero-duration').textContent = `${hours}h ${minutes}min`;
+            document.getElementById('hero-description').textContent = content.overview || 'Descrição não disponível.';
+            document.querySelector('.rating').textContent = 'Livre';
+            if (content.backdrop_path) {
+                hero.style.background = `linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%), url('${IMAGE_BASE_URL}${content.backdrop_path}') center/cover`;
+            }
+            hero.classList.add('fade-in');
+        }
+
+        function startHeroRotation() {
+            setInterval(async () => {
+                try {
+                    const response = await fetch(`${BASE_URL}/discover/movie?api_key=${API_KEY}&language=pt-BR&with_genres=10751&sort_by=popularity.desc&page=1`);
+                    const data = await response.json();
+                    if (data.results && data.results.length > 0) {
+                        let randomContent;
+                        do {
+                            randomContent = data.results[Math.floor(Math.random() * data.results.length)];
+                        } while (randomContent.id === currentHeroMovie?.id);
+                        selectMovieForHero(randomContent);
+                    }
+                } catch (error) {
+                    console.error('Erro na rotação do hero:', error);
+                }
+            }, 5000);
+        }
+
+        function initializeApp() {
+            Promise.all([fetchKidsMovies(), fetchKidsSeries(), fetchAnimation(), fetchEducational()]).then(() => {
+                fetch(`${BASE_URL}/discover/movie?api_key=${API_KEY}&language=pt-BR&with_genres=10751&sort_by=popularity.desc&page=1`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.results && data.results.length > 0) {
+                            selectMovieForHero(data.results[0]);
+                        }
+                    });
+            });
+            startHeroRotation();
+            document.getElementById('btn-play').addEventListener('click', () => {
+                if (currentHeroMovie) {
+                    const title = currentHeroMovie.title || currentHeroMovie.name || 'Conteúdo';
+                    // Abre o player no próprio sistema
+                    window.location.href = `/player.html?content=${encodeURIComponent(title)}&id=${currentHeroMovie.id}&type=${currentHeroMovie.title ? 'movie' : 'tv'}`;
+                    // Atualiza o título para o nome do sistema
+                    document.title = 'WebTV Prime - Streaming Premium';
+                }
+            });
+            document.getElementById('btn-info').addEventListener('click', () => {
+                if (currentHeroMovie) {
+                    const title = currentHeroMovie.title || currentHeroMovie.name || 'Conteúdo';
+                    alert(`Informações sobre: ${title}\n\nSinopse: ${currentHeroMovie.overview || 'Não disponível'}\n\nAvaliação: ${currentHeroMovie.vote_average || 'N/A'}\n\nLançamento: ${currentHeroMovie.release_date || currentHeroMovie.first_air_date || 'N/A'}`);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>

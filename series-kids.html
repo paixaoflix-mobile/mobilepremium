@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Séries Kids - WebTV</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+        body{background:#141414;color:white;overflow-x:hidden}
+        .header{position:fixed;top:0;width:100%;padding:20px 50px;background:linear-gradient(180deg,rgba(20,20,20,0.7) 10%,rgba(20,20,20,0) 100%);z-index:1000;display:flex;justify-content:space-between;align-items:center}
+        .logo{font-size:24px;font-weight:bold;color:#e50914}
+        .nav{display:flex;gap:30px}
+        .nav a{color:white;text-decoration:none;font-size:14px;transition:color .3s}
+        .nav a:hover{color:#e50914}
+        .nav a.active{color:#e50914;font-weight:bold}
+        .nav-right{display:flex;align-items:center;gap:20px}
+        .search-box{background:rgba(255,255,255,.1);border:none;padding:8px 15px;border-radius:4px;color:white;width:200px}
+        .search-box::placeholder{color:rgba(255,255,255,.7)}
+        .user-icon{width:32px;height:32px;background:#e50914;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:bold}
+        .content{margin-top:80px;padding:20px 50px}
+        .kids-hero{height:60vh;background:linear-gradient(90deg,rgba(78,205,196,0.8) 0%,rgba(68,160,144,0.4) 50%,transparent 100%),url('https://image.tmdb.org/t/p/original/8Y43POkjj2GIcHTlHtMvBZaNuh.jpg') center/cover;display:flex;align-items:center;padding-left:50px;position:relative;margin-bottom:40px;border-radius:12px;overflow:hidden}
+        .hero-content{max-width:500px}
+        .kids-title{font-size:48px;font-weight:bold;margin-bottom:20px;line-height:1.1}
+        .hero-meta{display:flex;align-items:center;gap:15px;margin-bottom:15px;font-size:14px}
+        .match{color:#46d369;font-weight:bold}
+        .rating{border:1px solid rgba(255,255,255,0.4);padding:2px 6px;border-radius:3px}
+        .hero-buttons{display:flex;gap:15px;margin-bottom:30px}
+        .btn{padding:12px 30px;border:none;border-radius:4px;font-size:16px;font-weight:bold;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:8px}
+        .btn-play{background:white;color:black}
+        .btn-play:hover{background:rgba(255,255,255,0.8)}
+        .btn-info{background:rgba(109,109,110,0.7);color:white}
+        .btn-info:hover{background:rgba(109,109,110,0.5)}
+        .hero-description{font-size:14px;line-height:1.4;max-width:400px}
+        .kids-hero{background:linear-gradient(135deg,#4ecdc4 0%,#44a08d 100%);padding:60px 50px;border-radius:12px;margin-bottom:40px;text-align:center}
+        .kids-title{font-size:48px;font-weight:bold;margin-bottom:20px}
+        .kids-description{font-size:18px;line-height:1.5;max-width:600px;margin:0 auto}
+        .categories{margin-bottom:40px}
+        .category-title{font-size:24px;margin-bottom:20px;font-weight:bold}
+        .category-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:10px}
+        .category-scroll::-webkit-scrollbar{height:8px}
+        .category-scroll::-webkit-scrollbar-track{background:#333}
+        .category-scroll::-webkit-scrollbar-thumb{background:#666;border-radius:4px}
+        .category-item{flex-shrink:0;background:#333;padding:8px 20px;border-radius:20px;font-size:14px;white-space:nowrap;cursor:pointer;transition:background .3s}
+        .category-item:hover{background:#444}
+        .category-item.active{background:#4ecdc4;color:white}
+        .kids-section{margin-bottom:40px}
+        .kids-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:15px}
+        .kids-card{position:relative;border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .3s;aspect-ratio:2/3;border:3px solid transparent}
+        .kids-card:hover{transform:scale(1.05);border-color:#4ecdc4}
+        .kids-card img{width:100%;height:100%;object-fit:cover}
+        .kids-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,.9),transparent);padding:15px;opacity:0;transition:opacity .3s}
+        .kids-card:hover .kids-overlay{opacity:1}
+        .kids-title-card{font-size:14px;font-weight:bold;margin-bottom:5px}
+        .kids-info{font-size:12px;color:#ccc}
+        .age-badge{position:absolute;top:10px;right:10px;background:#4ecdc4;color:white;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:bold}
+        .loading{text-align:center;padding:40px;font-size:18px;color:#4ecdc4}
+        @media (max-width:768px){.header{padding:15px 20px}.nav{display:none}.search-box{width:120px}.content{padding:20px}.kids-hero{padding:40px 20px}.kids-title{font-size:32px}.kids-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">🔥 WebTV</div>
+        <nav class="nav">
+            <a href="index.html">Home</a>
+            <a href="cinema.html">Cinema</a>
+            <a href="series.html">Séries</a>
+            <a href="movies.html">Filmes</a>
+            <a href="filmes-kids.html">Filmes Kids</a>
+            <a href="series-kids.html" class="active">Séries Kids</a>
+            <a href="mylist.html">Meus Favoritos</a>
+            <a href="tv-ao-vivo.html">TV ao Vivo</a>
+        </nav>
+        <div class="nav-right">
+            <input type="text" class="search-box" placeholder="Pesquisar séries kids">
+            <div class="user-icon">U</div>
+        </div>
+    </header>
+    <div class="content">
+        <!-- Kids Hero Banner -->
+        <div class="kids-hero" id="kids-hero">
+            <div class="hero-content">
+                <h1 class="kids-title" id="hero-title">🎪 Séries Kids</h1>
+                <div class="hero-meta" id="hero-meta">
+                    <span class="match">98% Correspondente</span>
+                    <span id="hero-year">2023</span>
+                    <span class="rating">LIVRE</span>
+                    <span id="hero-seasons">2 Temporadas</span>
+                </div>
+                <div class="hero-buttons">
+                    <button class="btn-play" id="btn-play">
+                        <span>▶</span>
+                        Assistir Agora
+                    </button>
+                    <button class="btn-info" id="btn-info">
+                        <span>ℹ</span>
+                        Mais Informações
+                    </button>
+                </div>
+                <p class="hero-description" id="hero-description">
+                    Aventuras sem fim! Séries animadas e educativas que divertem e ensinam 
+                    as crianças com personagens incríveis e histórias mágicas.
+                </p>
+            </div>
+        </div>
+        <div class="categories">
+            <div class="category-scroll">
+                <div class="category-item active">Todas</div>
+                <div class="category-item">Animação</div>
+                <div class="category-item">Educativas</div>
+                <div class="category-item">Aventura</div>
+                <div class="category-item">Comédia</div>
+                <div class="category-item">Fantasia</div>
+                <div class="category-item">Cartoon Network</div>
+                <div class="category-item">Disney Channel</div>
+            </div>
+        </div>
+        <div class="kids-section">
+            <h2 class="category-title">Séries Infantis Populares</h2>
+            <div class="kids-grid" id="popular-kids">
+                <div class="loading">Carregando séries...</div>
+            </div>
+        </div>
+        <div class="kids-section">
+            <h2 class="category-title">Animações</h2>
+            <div class="kids-grid" id="animation">
+                <div class="loading">Carregando animações...</div>
+            </div>
+        </div>
+        <div class="kids-section">
+            <h2 class="category-title">Séries Educativas</h2>
+            <div class="kids-grid" id="educational">
+                <div class="loading">Carregando séries educativas...</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const API_KEY='b275ce8e1a6b3d5d879bb0907e4f56ad',BASE_URL='https://api.themoviedb.org/3';
+        async function loadPopularKids(){try{const r=await fetch(`${BASE_URL}/discover/tv?api_key=${API_KEY}&language=pt-BR&with_genres=16,10762&sort_by=popularity.desc&page=1`),data=await r.json();const g=document.getElementById('popular-kids');g.innerHTML='';data.results.slice(0,12).forEach(s=>{const c=createKidsCard(s);g.appendChild(c)})}catch(e){console.error('Erro:',e);document.getElementById('popular-kids').innerHTML='<div class="loading">Erro ao carregar</div>'}}
+        async function loadAnimation(){try{const r=await fetch(`${BASE_URL}/discover/tv?api_key=${API_KEY}&language=pt-BR&with_genres=16&sort_by=popularity.desc&page=1`),data=await r.json();const g=document.getElementById('animation');g.innerHTML='';data.results.slice(0,12).forEach(s=>{const c=createKidsCard(s);g.appendChild(c)})}catch(e){console.error('Erro:',e);document.getElementById('animation').innerHTML='<div class="loading">Erro ao carregar</div>'}}
+        async function loadEducational(){try{const r=await fetch(`${BASE_URL}/discover/tv?api_key=${API_KEY}&language=pt-BR&with_genres=10762&sort_by=popularity.desc&page=1`),data=await r.json();const g=document.getElementById('educational');g.innerHTML='';data.results.slice(0,12).forEach(s=>{const c=createKidsCard(s);g.appendChild(c)})}catch(e){console.error('Erro:',e);document.getElementById('educational').innerHTML='<div class="loading">Erro ao carregar</div>'}}
+        function createKidsCard(s){const c=document.createElement('div');c.className='kids-card';const p=s.poster_path?`https://image.tmdb.org/t/p/w500${s.poster_path}`:'https://via.placeholder.com/500x750/333/fff?text=Sem+Imagem';c.innerHTML=`<div class="age-badge">LIVRE</div><img src="${p}" alt="${s.name}"><div class="kids-overlay"><div class="kids-title-card">${s.name}</div><div class="kids-info">📺 ${s.number_of_seasons||1} temporada${s.number_of_seasons>1?'s':''} • ⭐ ${s.vote_average?.toFixed(1)||'N/A'}</div></div>`;c.addEventListener('click',()=>console.log('Série kids clicada:',s));return c}
+        async function getTMDBData(type,id){try{const url=type==='movie'?`${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=pt-BR`:`${BASE_URL}/tv/${id}?api_key=${API_KEY}&language=pt-BR`,r=await fetch(url);return await r.json()}catch(e){console.error('Erro ao buscar dados TMDB:',e);return null}}
+        async function loadKidsHero(){try{const r=await fetch('./series.json'),data=await r.json();if(data.length>0){const series=data[1],tmdbData=await getTMDBData('tv',series.tmdb_id);if(tmdbData){updateKidsHero(tmdbData,series)}}}catch(e){console.error('Erro ao carregar hero:',e)}}
+        function updateKidsHero(data,localData){const hero=document.getElementById('kids-hero'),title=document.getElementById('hero-title'),year=document.getElementById('hero-year'),seasons=document.getElementById('hero-seasons'),description=document.getElementById('hero-description'),btnPlay=document.getElementById('btn-play');title.textContent=data.name||localData.titulo;year.textContent=data.first_air_date?new Date(data.first_air_date).getFullYear():'2023';seasons.textContent=data.number_of_seasons?`${data.number_of_seasons} Temporada${data.number_of_seasons>1?'s':''}`:'1 Temporada';description.textContent=data.overview?data.overview.substring(0,200)+'...':'Série infantil em destaque com episódios divertidos.';if(data.backdrop_path){hero.style.background=`linear-gradient(90deg,rgba(78,205,196,0.8) 0%,rgba(68,160,144,0.4) 50%,transparent 100%),url('https://image.tmdb.org/t/p/original${data.backdrop_path}') center/cover`}btnPlay.onclick=()=>{if(localData.identificador_archive){window.open(`https://archive.org/details/${localData.identificador_archive}`,'_blank')}else if(data.id){console.log('Assistir série kids:',data)}}}
+        document.addEventListener('DOMContentLoaded',()=>{loadPopularKids();loadAnimation();loadEducational();loadKidsHero();document.querySelectorAll('.category-item').forEach(i=>{i.addEventListener('click',function(){document.querySelectorAll('.category-item').forEach(j=>j.classList.remove('active'));this.classList.add('active')})});document.querySelector('.search-box').addEventListener('input',e=>{const s=e.target.value.toLowerCase();if(s.length>2)console.log('Buscando:',s)})});
+    </script>
+</body>
+</html>

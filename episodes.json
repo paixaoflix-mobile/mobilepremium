@@ -1,0 +1,74 @@
+[
+    {
+        "serie_id": "1892",
+        "serie_title": "Um Maluco no Pedaço",
+        "temporada": "6",
+        "episodio": "1",
+        "titulo_episodio": "Piloto - A Chegada",
+        "descricao": "Will Smith se muda para Bel-Air e precisa se adaptar à nova vida rica.",
+        "duracao": "22min",
+        "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "thumbnail": "https://image.tmdb.org/t/p/w500/5XtDnRYzldXnjOAWpOv6dC3Aq9E.jpg",
+        "data_lancamento": "2024-01-15"
+    },
+    {
+        "serie_id": "1892",
+        "serie_title": "Um Maluco no Pedaço",
+        "temporada": "6",
+        "episodio": "2",
+        "titulo_episodio": "A Primeira Festa",
+        "descricao": "Will vai à sua primeira festa na escola e se mete em confusão.",
+        "duracao": "22min",
+        "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        "thumbnail": "https://image.tmdb.org/t/p/w500/5XtDnRYzldXnjOAWpOv6dC3Aq9E.jpg",
+        "data_lancamento": "2024-01-22"
+    },
+    {
+        "serie_id": "1892",
+        "serie_title": "Um Maluco no Pedaço",
+        "temporada": "6",
+        "episodio": "3",
+        "titulo_episodio": "Problemas na Escola",
+        "descricao": "Will enfrenta problemas acadêmicos e precisa da ajuda da família.",
+        "duracao": "22min",
+        "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+        "thumbnail": "https://image.tmdb.org/t/p/w500/5XtDnRYzldXnjOAWpOv6dC3Aq9E.jpg",
+        "data_lancamento": "2024-01-29"
+    },
+    {
+        "serie_id": "2804",
+        "serie_title": "Grey's Anatomy",
+        "temporada": "4",
+        "episodio": "1",
+        "titulo_episodio": "A Vida Continua",
+        "descricao": "Os médicos do Seattle Grace enfrentam novos desafios na quarta temporada.",
+        "duracao": "45min",
+        "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "thumbnail": "https://image.tmdb.org/t/p/w500/kBq3w9Nmf9md4wiYs3OHpSzXHJ5.jpg",
+        "data_lancamento": "2008-09-25"
+    },
+    {
+        "serie_id": "2804",
+        "serie_title": "Grey's Anatomy",
+        "temporada": "4",
+        "episodio": "2",
+        "titulo_episodio": "Corações em Jogo",
+        "descricao": "Meredith e Derek enfrentam dilemas sobre seu relacionamento.",
+        "duracao": "45min",
+        "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        "thumbnail": "https://image.tmdb.org/t/p/w500/kBq3w9Nmf9md4wiYs3OHpSzXHJ5.jpg",
+        "data_lancamento": "2008-10-02"
+    },
+    {
+        "serie_id": "2804",
+        "serie_title": "Grey's Anatomy",
+        "temporada": "4",
+        "episodio": "3",
+        "titulo_episodio": "Emergência Crítica",
+        "descricao": "Uma emergência de grande porte testa todos os médicos do hospital.",
+        "duracao": "45min",
+        "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+        "thumbnail": "https://image.tmdb.org/t/p/w500/kBq3w9Nmf9md4wiYs3OHpSzXHJ5.jpg",
+        "data_lancamento": "2008-10-09"
+    }
+]

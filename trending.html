@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bombando - WebTV</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #141414;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            background: linear-gradient(180deg, rgba(20,20,20,0.7) 10%, rgba(20,20,20,0) 100%);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e50914;
+        }
+
+        .nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover {
+            color: #e50914;
+        }
+
+        .nav a.active {
+            color: #e50914;
+            font-weight: bold;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .search-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            color: white;
+            width: 200px;
+        }
+
+        .search-box::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .user-icon {
+            width: 32px;
+            height: 32px;
+            background: #e50914;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Content */
+        .content {
+            margin-top: 80px;
+            padding: 20px 50px;
+        }
+
+        /* Hero Trending */
+        .hero-trending {
+            height: 60vh;
+            background: linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%),
+                        url('https://image.tmdb.org/t/p/original/8Y43POkjj2GIcHTlHtMvBZaNuh.jpg') center/cover;
+            display: flex;
+            align-items: center;
+            padding-left: 50px;
+            position: relative;
+            margin-bottom: 40px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 500px;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .hero-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .match {
+            color: #46d369;
+            font-weight: bold;
+        }
+
+        .rating {
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .hero-description {
+            font-size: 14px;
+            line-height: 1.4;
+            max-width: 400px;
+        }
+
+        /* Trending Grid */
+        .trending-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .trending-icon {
+            color: #e50914;
+            font-size: 20px;
+        }
+
+        .trending-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .trending-card {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s;
+            aspect-ratio: 2/3;
+        }
+
+        .trending-card:hover {
+            transform: scale(1.05);
+        }
+
+        .trending-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .trending-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .trending-card:hover .trending-overlay {
+            opacity: 1;
+        }
+
+        .trending-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .trending-info {
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .trending-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #e50914;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #e50914;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .nav {
+                display: none;
+            }
+
+            .search-box {
+                width: 120px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .hero-trending {
+                height: 40vh;
+                padding-left: 20px;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .trending-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">🔥 WebTV</div>
+        <nav class="nav">
+            <a href="index.html">Início</a>
+            <a href="series.html">Séries</a>
+            <a href="movies.html">Filmes</a>
+            <a href="trending.html" class="active">Bombando</a>
+            <a href="mylist.html">Minha Lista</a>
+            <a href="browse.html">Navegar por Idiomas</a>
+        </nav>
+        <div class="nav-right">
+            <input type="text" class="search-box" placeholder="Pesquisar">
+            <div class="user-icon">U</div>
+        </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+        <!-- Hero Trending -->
+        <div class="hero-trending">
+            <div class="hero-content">
+                <h1 class="hero-title">🔥 Bombando Agora</h1>
+                <div class="hero-meta">
+                    <span class="match">Top 10</span>
+                    <span>Esta Semana</span>
+                </div>
+                <p class="hero-description">
+                    Descubra o que está fazendo sucesso no momento. Séries e filmes que estão dominando as paradas e conversas globais.
+                </p>
+            </div>
+        </div>
+
+        <!-- Trending Today -->
+        <div class="trending-section">
+            <h2 class="section-title">
+                <span class="trending-icon">🔥</span>
+                Bombando Hoje
+            </h2>
+            <div class="trending-grid" id="trending-today">
+                <div class="loading">Carregando conteúdo...</div>
+            </div>
+        </div>
+
+        <!-- Trending This Week -->
+        <div class="trending-section">
+            <h2 class="section-title">
+                <span class="trending-icon">📈</span>
+                Bombando Esta Semana
+            </h2>
+            <div class="trending-grid" id="trending-week">
+                <div class="loading">Carregando conteúdo...</div>
+            </div>
+        </div>
+
+        <!-- Trending Movies -->
+        <div class="trending-section">
+            <h2 class="section-title">
+                <span class="trending-icon">🎬</span>
+                Filmes Bombando
+            </h2>
+            <div class="trending-grid" id="trending-movies">
+                <div class="loading">Carregando filmes...</div>
+            </div>
+        </div>
+
+        <!-- Trending Series -->
+        <div class="trending-section">
+            <h2 class="section-title">
+                <span class="trending-icon">📺</span>
+                Séries Bombando
+            </h2>
+            <div class="trending-grid" id="trending-series">
+                <div class="loading">Carregando séries...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = 'b275ce8e1a6b3d5d879bb0907e4f56ad';
+        const BASE_URL = 'https://api.themoviedb.org/3';
+
+        async function loadTrendingToday() {
+            try {
+                const response = await fetch(`${BASE_URL}/trending/all/day?api_key=${API_KEY}&language=pt-BR`);
+                const data = await response.json();
+                
+                const grid = document.getElementById('trending-today');
+                grid.innerHTML = '';
+                
+                data.results.slice(0, 12).forEach((item, index) => {
+                    const card = createTrendingCard(item, index + 1);
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar trending hoje:', error);
+                document.getElementById('trending-today').innerHTML = '<div class="loading">Erro ao carregar conteúdo</div>';
+            }
+        }
+
+        async function loadTrendingWeek() {
+            try {
+                const response = await fetch(`${BASE_URL}/trending/all/week?api_key=${API_KEY}&language=pt-BR`);
+                const data = await response.json();
+                
+                const grid = document.getElementById('trending-week');
+                grid.innerHTML = '';
+                
+                data.results.slice(0, 12).forEach((item, index) => {
+                    const card = createTrendingCard(item, index + 1);
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar trending semana:', error);
+                document.getElementById('trending-week').innerHTML = '<div class="loading">Erro ao carregar conteúdo</div>';
+            }
+        }
+
+        async function loadTrendingMovies() {
+            try {
+                const response = await fetch(`${BASE_URL}/trending/movie/week?api_key=${API_KEY}&language=pt-BR`);
+                const data = await response.json();
+                
+                const grid = document.getElementById('trending-movies');
+                grid.innerHTML = '';
+                
+                data.results.slice(0, 12).forEach((item, index) => {
+                    const card = createTrendingCard(item, index + 1);
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar filmes trending:', error);
+                document.getElementById('trending-movies').innerHTML = '<div class="loading">Erro ao carregar filmes</div>';
+            }
+        }
+
+        async function loadTrendingSeries() {
+            try {
+                const response = await fetch(`${BASE_URL}/trending/tv/week?api_key=${API_KEY}&language=pt-BR`);
+                const data = await response.json();
+                
+                const grid = document.getElementById('trending-series');
+                grid.innerHTML = '';
+                
+                data.results.slice(0, 12).forEach((item, index) => {
+                    const card = createTrendingCard(item, index + 1);
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar séries trending:', error);
+                document.getElementById('trending-series').innerHTML = '<div class="loading">Erro ao carregar séries</div>';
+            }
+        }
+
+        function createTrendingCard(item, rank) {
+            const card = document.createElement('div');
+            card.className = 'trending-card';
+            
+            const posterPath = item.poster_path 
+                ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
+                : 'https://via.placeholder.com/500x750/333/fff?text=Sem+Imagem';
+            
+            const title = item.title || item.name;
+            const year = item.first_air_date ? new Date(item.first_air_date).getFullYear() : 
+                        item.release_date ? new Date(item.release_date).getFullYear() : 'N/A';
+            const type = item.first_air_date ? 'Série' : 'Filme';
+            const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+            
+            card.innerHTML = `
+                <div class="trending-badge">#${rank}</div>
+                <img src="${posterPath}" alt="${title}">
+                <div class="trending-overlay">
+                    <div class="trending-title">${title}</div>
+                    <div class="trending-info">${type} • ⭐ ${rating} • ${year}</div>
+                </div>
+            `;
+            
+            card.addEventListener('click', () => {
+                console.log('Item trending clicado:', item);
+            });
+            
+            return card;
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTrendingToday();
+            loadTrendingWeek();
+            loadTrendingMovies();
+            loadTrendingSeries();
+            
+            // Busca
+            document.querySelector('.search-box').addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                if (searchTerm.length > 2) {
+                    console.log('Buscando trending:', searchTerm);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

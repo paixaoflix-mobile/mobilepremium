@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Lista - WebTV</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #141414;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            background: linear-gradient(180deg, rgba(20,20,20,0.7) 10%, rgba(20,20,20,0) 100%);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e50914;
+        }
+
+        .nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover {
+            color: #e50914;
+        }
+
+        .nav a.active {
+            color: #e50914;
+            font-weight: bold;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .search-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            color: white;
+            width: 200px;
+        }
+
+        .search-box::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .user-icon {
+            width: 32px;
+            height: 32px;
+            background: #e50914;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Content */
+        .content {
+            margin-top: 80px;
+            padding: 20px 50px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .empty-icon {
+            font-size: 80px;
+            color: #e50914;
+            margin-bottom: 20px;
+        }
+
+        .empty-title {
+            font-size: 32px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .empty-description {
+            font-size: 18px;
+            color: #ccc;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .btn-explore {
+            background: #e50914;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-explore:hover {
+            background: #f40612;
+        }
+
+        /* My List Grid */
+        .mylist-section {
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .list-count {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .mylist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .mylist-card {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s;
+            aspect-ratio: 2/3;
+        }
+
+        .mylist-card:hover {
+            transform: scale(1.05);
+        }
+
+        .mylist-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .mylist-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .mylist-card:hover .mylist-overlay {
+            opacity: 1;
+        }
+
+        .mylist-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .mylist-info {
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(229, 9, 20, 0.8);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .mylist-card:hover .remove-btn {
+            opacity: 1;
+        }
+
+        .remove-btn:hover {
+            background: #e50914;
+        }
+
+        /* Categories */
+        .categories {
+            margin-bottom: 40px;
+        }
+
+        .category-scroll {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .category-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .category-scroll::-webkit-scrollbar-track {
+            background: #333;
+        }
+
+        .category-scroll::-webkit-scrollbar-thumb {
+            background: #666;
+            border-radius: 4px;
+        }
+
+        .category-item {
+            flex-shrink: 0;
+            background: #333;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .category-item:hover {
+            background: #444;
+        }
+
+        .category-item.active {
+            background: white;
+            color: black;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #e50914;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .nav {
+                display: none;
+            }
+
+            .search-box {
+                width: 120px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .mylist-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .empty-title {
+                font-size: 24px;
+            }
+
+            .empty-description {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">🔥 WebTV</div>
+        <nav class="nav">
+            <a href="index.html">Home</a>
+            <a href="cinema.html">Cinema</a>
+            <a href="series.html">Séries</a>
+            <a href="movies.html">Filmes</a>
+            <a href="filmes-kids.html">Filmes Kids</a>
+            <a href="series-kids.html">Séries Kids</a>
+            <a href="mylist.html" class="active">Meus Favoritos</a>
+            <a href="tv-ao-vivo.html">TV ao Vivo</a>
+        </nav>
+        <div class="nav-right">
+            <input type="text" class="search-box" placeholder="Pesquisar na lista">
+            <div class="user-icon">U</div>
+        </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+        <!-- Empty State (shown when list is empty) -->
+        <div class="empty-state" id="empty-state">
+            <div class="empty-icon">📋</div>
+            <h2 class="empty-title">Sua lista está vazia</h2>
+            <p class="empty-description">
+                Adicione filmes e séries à sua lista para assistir mais tarde. 
+                Clique no ícone "+" em qualquer título para adicioná-lo aqui.
+            </p>
+            <a href="index.html" class="btn-explore">Explorar Conteúdo</a>
+        </div>
+
+        <!-- Categories (shown when list has items) -->
+        <div class="categories" id="categories" style="display: none;">
+            <div class="category-scroll">
+                <div class="category-item active">Todos</div>
+                <div class="category-item">Filmes</div>
+                <div class="category-item">Séries</div>
+                <div class="category-item">Adicionados Recentemente</div>
+                <div class="category-item">Já Vistos</div>
+                <div class="category-item">Para Ver Depois</div>
+            </div>
+        </div>
+
+        <!-- My List Grid (shown when list has items) -->
+        <div class="mylist-section" id="mylist-section" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">Minha Lista</h2>
+                <div class="list-count" id="list-count">0 itens</div>
+            </div>
+            <div class="mylist-grid" id="mylist-grid">
+                <!-- Items will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulated my list data (in real app, this would come from localStorage or backend)
+        let myList = JSON.parse(localStorage.getItem('myList')) || [];
+
+        function updateMyListDisplay() {
+            const emptyState = document.getElementById('empty-state');
+            const categories = document.getElementById('categories');
+            const myListSection = document.getElementById('mylist-section');
+            const myListGrid = document.getElementById('mylist-grid');
+            const listCount = document.getElementById('list-count');
+
+            if (myList.length === 0) {
+                emptyState.style.display = 'block';
+                categories.style.display = 'none';
+                myListSection.style.display = 'none';
+            } else {
+                emptyState.style.display = 'none';
+                categories.style.display = 'block';
+                myListSection.style.display = 'block';
+                
+                listCount.textContent = `${myList.length} itens`;
+                myListGrid.innerHTML = '';
+                
+                myList.forEach((item, index) => {
+                    const card = createMyListCard(item, index);
+                    myListGrid.appendChild(card);
+                });
+            }
+        }
+
+        function createMyListCard(item, index) {
+            const card = document.createElement('div');
+            card.className = 'mylist-card';
+            
+            const posterPath = item.poster_path 
+                ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
+                : 'https://via.placeholder.com/500x750/333/fff?text=Sem+Imagem';
+            
+            const title = item.title || item.name;
+            const year = item.first_air_date ? new Date(item.first_air_date).getFullYear() : 
+                        item.release_date ? new Date(item.release_date).getFullYear() : 'N/A';
+            const type = item.first_air_date ? 'Série' : 'Filme';
+            const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+            
+            card.innerHTML = `
+                <button class="remove-btn" onclick="removeFromList(${index})">×</button>
+                <img src="${posterPath}" alt="${title}">
+                <div class="mylist-overlay">
+                    <div class="mylist-title">${title}</div>
+                    <div class="mylist-info">${type} • ⭐ ${rating} • ${year}</div>
+                </div>
+            `;
+            
+            card.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('remove-btn')) {
+                    console.log('Item da lista clicado:', item);
+                }
+            });
+            
+            return card;
+        }
+
+        function removeFromList(index) {
+            myList.splice(index, 1);
+            localStorage.setItem('myList', JSON.stringify(myList));
+            updateMyListDisplay();
+        }
+
+        function addToListItem(item) {
+            // Check if item already exists
+            const exists = myList.some(existing => 
+                (existing.id === item.id) && 
+                (existing.media_type === item.media_type)
+            );
+            
+            if (!exists) {
+                myList.push(item);
+                localStorage.setItem('myList', JSON.stringify(myList));
+                updateMyListDisplay();
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            updateMyListDisplay();
+            
+            // Categorias
+            document.querySelectorAll('.category-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Busca
+            document.querySelector('.search-box').addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                if (searchTerm.length > 2) {
+                    // Filtrar itens da lista
+                    const filtered = myList.filter(item => {
+                        const title = (item.title || item.name).toLowerCase();
+                        return title.includes(searchTerm);
+                    });
+                    
+                    const myListGrid = document.getElementById('mylist-grid');
+                    if (filtered.length === 0) {
+                        myListGrid.innerHTML = '<div class="loading">Nenhum item encontrado</div>';
+                    } else {
+                        myListGrid.innerHTML = '';
+                        filtered.forEach((item, index) => {
+                            const originalIndex = myList.indexOf(item);
+                            const card = createMyListCard(item, originalIndex);
+                            myListGrid.appendChild(card);
+                        });
+                    }
+                } else {
+                    updateMyListDisplay();
+                }
+            });
+        });
+
+        // Make addToListItem available globally
+        window.addToListItem = addToListItem;
+    </script>
+</body>
+</html>

@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navegar por Idiomas - WebTV</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #141414;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            background: linear-gradient(180deg, rgba(20,20,20,0.7) 10%, rgba(20,20,20,0) 100%);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e50914;
+        }
+
+        .nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover {
+            color: #e50914;
+        }
+
+        .nav a.active {
+            color: #e50914;
+            font-weight: bold;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .search-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            color: white;
+            width: 200px;
+        }
+
+        .search-box::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .user-icon {
+            width: 32px;
+            height: 32px;
+            background: #e50914;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Content */
+        .content {
+            margin-top: 80px;
+            padding: 20px 50px;
+        }
+
+        /* Language Hero */
+        .language-hero {
+            background: linear-gradient(135deg, #e50914 0%, #f40612 100%);
+            padding: 60px 50px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .hero-description {
+            font-size: 18px;
+            line-height: 1.5;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+
+        /* Languages Grid */
+        .languages-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .languages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .language-card {
+            background: #333;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .language-card:hover {
+            background: #444;
+            transform: translateY(-5px);
+            border-color: #e50914;
+        }
+
+        .language-flag {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .language-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .language-count {
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        /* Popular Languages */
+        .popular-languages {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .popular-tag {
+            background: #e50914;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .popular-tag:hover {
+            background: #f40612;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+        }
+
+        .filter-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-option {
+            background: #333;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .filter-option:hover {
+            background: #444;
+        }
+
+        .filter-option.active {
+            background: #e50914;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .content-card {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s;
+            aspect-ratio: 2/3;
+        }
+
+        .content-card:hover {
+            transform: scale(1.05);
+        }
+
+        .content-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .content-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .content-card:hover .content-overlay {
+            opacity: 1;
+        }
+
+        .content-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .content-info {
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #e50914;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .nav {
+                display: none;
+            }
+
+            .search-box {
+                width: 120px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .language-hero {
+                padding: 40px 20px;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .hero-description {
+                font-size: 16px;
+            }
+
+            .languages-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+            }
+
+            .language-card {
+                padding: 20px;
+            }
+
+            .language-flag {
+                font-size: 36px;
+                margin-bottom: 10px;
+            }
+
+            .language-name {
+                font-size: 16px;
+            }
+
+            .content-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">🔥 WebTV</div>
+        <nav class="nav">
+            <a href="index.html">Início</a>
+            <a href="series.html">Séries</a>
+            <a href="movies.html">Filmes</a>
+            <a href="trending.html">Bombando</a>
+            <a href="mylist.html">Minha Lista</a>
+            <a href="browse.html" class="active">Navegar por Idiomas</a>
+        </nav>
+        <div class="nav-right">
+            <input type="text" class="search-box" placeholder="Pesquisar por idioma">
+            <div class="user-icon">U</div>
+        </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+        <!-- Language Hero -->
+        <div class="language-hero">
+            <h1 class="hero-title">🌍 Navegar por Idiomas</h1>
+            <p class="hero-description">
+                Explore filmes e séries em diferentes idiomas de todo o mundo. 
+                Descubra conteúdo internacional e aprenda com produções de diversas culturas.
+            </p>
+        </div>
+
+        <!-- Popular Languages -->
+        <div class="languages-section">
+            <h2 class="section-title">Idiomas Populares</h2>
+            <div class="popular-languages">
+                <div class="popular-tag" onclick="loadLanguage('pt-BR')">🇧🇷 Português</div>
+                <div class="popular-tag" onclick="loadLanguage('en-US')">🇺🇸 Inglês</div>
+                <div class="popular-tag" onclick="loadLanguage('es-ES')">🇪🇸 Espanhol</div>
+                <div class="popular-tag" onclick="loadLanguage('fr-FR')">🇫🇷 Francês</div>
+                <div class="popular-tag" onclick="loadLanguage('de-DE')">🇩🇪 Alemão</div>
+                <div class="popular-tag" onclick="loadLanguage('it-IT')">🇮🇹 Italiano</div>
+                <div class="popular-tag" onclick="loadLanguage('ja-JP')">🇯🇵 Japonês</div>
+                <div class="popular-tag" onclick="loadLanguage('ko-KR')">🇰🇷 Coreano</div>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h3 class="filter-title">Filtrar por:</h3>
+            <div class="filter-options">
+                <div class="filter-option active" onclick="filterContent('all')">Todos</div>
+                <div class="filter-option" onclick="filterContent('movies')">Filmes</div>
+                <div class="filter-option" onclick="filterContent('series')">Séries</div>
+                <div class="filter-option" onclick="filterContent('documentary')">Documentários</div>
+            </div>
+        </div>
+
+        <!-- All Languages Grid -->
+        <div class="languages-section">
+            <h2 class="section-title">Todos os Idiomas</h2>
+            <div class="languages-grid">
+                <div class="language-card" onclick="loadLanguage('pt-BR')">
+                    <div class="language-flag">🇧🇷</div>
+                    <div class="language-name">Português</div>
+                    <div class="language-count">2,341 títulos</div>
+                </div>
+                <div class="language-card" onclick="loadLanguage('en-US')">
+                    <div class="language-flag">🇺🇸</div>
+                    <div class="language-name">Inglês</div>
+                    <div class="language-count">15,892 títulos</div>
+                </div>
+                <div class="language-card" onclick="loadLanguage('es-ES')">
+                    <div class="language-flag">🇪🇸</div>
+                    <div class="language-name">Espanhol</div>
+                    <div class="language-count">3,456 títulos</div>
+                </div>
+                <div class="language-card" onclick="loadLanguage('fr-FR')">
+                    <div class="language-flag">🇫🇷</div>
+                    <div class="language-name">Francês</div>
+                    <div class="language-count">2,123 títulos</div>
+                </div>
+                <div class="language-card" onclick="loadLanguage('de-DE')">
+                    <div class="language-flag">🇩🇪</div>
+                    <div class="language-name">Alemão</div>
+                    <div class="language-count">1,987 títulos</div>
+                </div>
+                <div class="language-card" onclick="loadLanguage('it-IT')">
+                    <div class="language-flag">🇮🇹</div>
+                    <div class="language-name">Italiano</div>
+                    <div class="language-count">1,654 títulos</div>
+                </div>
+                <div class="language-card" onclick="loadLanguage('ja-JP')">
+                    <div class="language-flag">🇯🇵</div>
+                    <div class="language-name">Japonês</div>
+                    <div class="language-count">3,789 títulos</div>
+                </div>
+                <div class="language-card" onclick="loadLanguage('ko-KR')">
+                    <div class="language-flag">🇰🇷</div>
+                    <div class="language-name">Coreano</div>
+                    <div class="language-count">2,345 títulos</div>
+                </div>
+                <div class="language-card" onclick="loadLanguage('zh-CN')">
+                    <div class="language-flag">🇨🇳</div>
+                    <div class="language-name">Mandarim</div>
+                    <div class="language-count">4,567 títulos</div>
+                </div>
+                <div class="language-card" onclick="loadLanguage('hi-IN')">
+                    <div class="language-flag">🇮🇳</div>
+                    <div class="language-name">Híndi</div>
+                    <div class="language-count">1,234 títulos</div>
+                </div>
+                <div class="language-card" onclick="loadLanguage('ar-SA')">
+                    <div class="language-flag">🇸🇦</div>
+                    <div class="language-name">Árabe</div>
+                    <div class="language-count">987 títulos</div>
+                </div>
+                <div class="language-card" onclick="loadLanguage('ru-RU')">
+                    <div class="language-flag">🇷🇺</div>
+                    <div class="language-name">Russo</div>
+                    <div class="language-count">1,456 títulos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="languages-section">
+            <h2 class="section-title" id="content-title">Conteúdo em Português</h2>
+            <div class="content-grid" id="content-grid">
+                <div class="loading">Carregando conteúdo...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = 'b275ce8e1a6b3d5d879bb0907e4f56ad';
+        const BASE_URL = 'https://api.themoviedb.org/3';
+        let currentLanguage = 'pt-BR';
+        let currentFilter = 'all';
+
+        async function loadLanguage(language) {
+            currentLanguage = language;
+            const contentTitle = document.getElementById('content-title');
+            const contentGrid = document.getElementById('content-grid');
+            
+            // Update title based on language
+            const languageNames = {
+                'pt-BR': 'Conteúdo em Português',
+                'en-US': 'Content in English',
+                'es-ES': 'Contenido en Español',
+                'fr-FR': 'Contenu en Français',
+                'de-DE': 'Inhalt auf Deutsch',
+                'it-IT': 'Contenuto in Italiano',
+                'ja-JP': '日本語のコンテンツ',
+                'ko-KR': '한국어 콘텐츠',
+                'zh-CN': '中文内容',
+                'hi-IN': 'हिंदी सामग्री',
+                'ar-SA': 'المحتوى باللغة العربية',
+                'ru-RU': 'Содержание на русском'
+            };
+            
+            contentTitle.textContent = languageNames[language] || 'Conteúdo';
+            contentGrid.innerHTML = '<div class="loading">Carregando conteúdo...</div>';
+            
+            await loadContent();
+        }
+
+        async function loadContent() {
+            try {
+                let url;
+                
+                if (currentFilter === 'movies') {
+                    url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=${currentLanguage}&page=1`;
+                } else if (currentFilter === 'series') {
+                    url = `${BASE_URL}/discover/tv?api_key=${API_KEY}&language=${currentLanguage}&page=1`;
+                } else if (currentFilter === 'documentary') {
+                    url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=${currentLanguage}&with_genres=99&page=1`;
+                } else {
+                    // Load both movies and TV
+                    const [moviesResponse, tvResponse] = await Promise.all([
+                        fetch(`${BASE_URL}/discover/movie?api_key=${API_KEY}&language=${currentLanguage}&page=1`),
+                        fetch(`${BASE_URL}/discover/tv?api_key=${API_KEY}&language=${currentLanguage}&page=1`)
+                    ]);
+                    
+                    const moviesData = await moviesResponse.json();
+                    const tvData = await tvResponse.json();
+                    
+                    const allContent = [
+                        ...moviesData.results.map(item => ({...item, media_type: 'movie'})),
+                        ...tvData.results.map(item => ({...item, media_type: 'tv'}))
+                    ].sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+                    
+                    displayContent(allContent.slice(0, 12));
+                    return;
+                }
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                const content = data.results.map(item => ({
+                    ...item,
+                    media_type: currentFilter === 'series' || url.includes('/tv/') ? 'tv' : 'movie'
+                }));
+                
+                displayContent(content.slice(0, 12));
+            } catch (error) {
+                console.error('Erro ao carregar conteúdo:', error);
+                document.getElementById('content-grid').innerHTML = '<div class="loading">Erro ao carregar conteúdo</div>';
+            }
+        }
+
+        function displayContent(content) {
+            const contentGrid = document.getElementById('content-grid');
+            contentGrid.innerHTML = '';
+            
+            content.forEach(item => {
+                const card = createContentCard(item);
+                contentGrid.appendChild(card);
+            });
+        }
+
+        function createContentCard(item) {
+            const card = document.createElement('div');
+            card.className = 'content-card';
+            
+            const posterPath = item.poster_path 
+                ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
+                : 'https://via.placeholder.com/500x750/333/fff?text=Sem+Imagem';
+            
+            const title = item.title || item.name;
+            const year = item.first_air_date ? new Date(item.first_air_date).getFullYear() : 
+                        item.release_date ? new Date(item.release_date).getFullYear() : 'N/A';
+            const type = item.first_air_date ? 'Série' : 'Filme';
+            const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+            
+            card.innerHTML = `
+                <img src="${posterPath}" alt="${title}">
+                <div class="content-overlay">
+                    <div class="content-title">${title}</div>
+                    <div class="content-info">${type} • ⭐ ${rating} • ${year}</div>
+                </div>
+            `;
+            
+            card.addEventListener('click', () => {
+                console.log('Item clicado:', item);
+            });
+            
+            return card;
+        }
+
+        function filterContent(filter) {
+            currentFilter = filter;
+            
+            // Update active filter
+            document.querySelectorAll('.filter-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Reload content
+            loadContent();
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            loadContent();
+            
+            // Busca
+            document.querySelector('.search-box').addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                if (searchTerm.length > 2) {
+                    console.log('Buscando por idioma:', searchTerm);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
